@@ -28,8 +28,7 @@ GameWindow::GameWindow(int width, int height, std::string programName)
     this->width = width;
     this->height = height;
     m_programName = programName;
-    
-    //m_gameloop = false;
+    m_console = Console();
 }
 
 SDL_Window *GameWindow::GetSDLWindow()
@@ -72,7 +71,7 @@ void GameWindow::init()
     }
 	
 	// Make this a configurable option. It is vsync on/off
-	SDL_GL_SetSwapInterval(1);
+	SDL_GL_SetSwapInterval(0);
 	
 	// Lock mouse to screen 
 	//SDL_SetWindowGrab(m_mainWindow, SDL_TRUE);

@@ -1,0 +1,1 @@
+sudo apt-get install mesa-common-dev xorg-dev libglew-dev libglu1-mesa-dev libglm-dev libsdl2-dev libassimp-dev  libglfw3-dev

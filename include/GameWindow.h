@@ -6,6 +6,9 @@
 #include <string>
 #include <stdexcept>
 
+#include <Console.h>
+
+
 class GameWindow
 {
 public:
@@ -18,15 +21,16 @@ public:
     int width, height;
     
     SDL_Window *GetSDLWindow();
+    void consoleHandler();
     
 private:
     // SDL window, where all the magic happens
     SDL_Window *m_mainWindow;
     // GL context, so excited
     SDL_GLContext m_mainContext;
-    
+    Console m_console;        
     std::string m_programName;
-   
+           
     void setOpenGLAttributes();
 };
 

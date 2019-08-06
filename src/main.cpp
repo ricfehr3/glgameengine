@@ -21,7 +21,8 @@ int main()
         app.init();
 
         Shader ourShader("shaders/1.model_loading.vs", "shaders/1.model_loading.fs");
-        Model ourModel("models/nanosuit/nanosuit.obj");
+        //Model ourModel("models/nanosuit/nanosuit.obj");
+        Model ourModel("models/cowboi/man_textured.obj");
         
         GameObject nanoman(&ourModel, &ourShader, "turd man");
         nanoman.setPosition(glm::vec3(0.0f, -1.75f, 0.0f));

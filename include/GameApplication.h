@@ -1,10 +1,13 @@
 #ifndef GAMEAPPLICATION_H
 #define GAMEAPPLICATION_H
 
+#include <mutex>
+
 #include <Camera.h>
 #include <GameWindow.h>
 #include <GameObject.h>
 #include <GameObjectList.h>
+#include <Messenger.h>
 
 class GameApplication
 {
@@ -25,6 +28,11 @@ private:
     bool m_menuMode;
     Camera* mp_camera;
     GameWindow* mp_gameWindow;
+    Messenger m_messenger;
+    std::mutex m_gameMutex;
+    
+    void runGameLoop();
+    void turds();
 };
 
 #endif
