@@ -32,7 +32,6 @@ private:
     std::mutex m_gameMutex;
     
     void runGameLoop();
-    void turds();
 };
 
 #endif

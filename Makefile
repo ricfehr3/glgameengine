@@ -1,23 +1,32 @@
-CFLAGS = -std=c++17 -Wall -g -Iinclude $(shell freetype-config --cflags)
+SOURCEDIR = src
+BUILDDIR = build
 
-
-##LDFLAGS = -L. -lglfw -lGL -ldl -lm -lassimp -lSDL2 -lpthread -lSDL_console
+CXXFLAGS = -std=c++17 -Wall -g -Iinclude $(shell freetype-config --cflags)
 LDFLAGS = -lglfw -lGL -ldl -lm -lassimp -lSDL2 -lpthread $(shell freetype-config --libs)
+TARGET = EngineTest
+SRCS = $(wildcard $(SOURCEDIR)/*.cpp)
+OBJS = $(patsubst $(SOURCEDIR)/%.cpp,$(BUILDDIR)/%.o,$(SRCS))
 
-#conscflags=-Wall -g -ggdb --std=c99 $(shell freetype-config --cflags)
-#consldflags=-lSDL2 -lGL -lm $(shell freetype-config --libs)
+all: $(TARGET)\
 
-all: EngineTest
-EngineTest: src/main.cpp
-	g++ $(CFLAGS) -o EngineTest src/main.cpp src/glad.c src/Shader.cpp src/stb_image.cpp src/Mesh.cpp src/Model.cpp src/GameWindow.cpp src/GameApplication.cpp src/GameObject.cpp src/GameObjectList.cpp src/GameScene.cpp src/Messenger.cpp src/Console.cpp $(LDFLAGS)
+$(TARGET): $(OBJS) glad
+	$(CXX) -o $(TARGET) $(CXXFLAGS) $(OBJS) $(BUILDDIR)/glad.o $(LDFLAGS)
+	
+glad: $(SOURCEDIR)/glad.c
+	$(CXX) -c $(CXXFLAGS) $(SOURCEDIR)/glad.c -o $(BUILDDIR)/glad.o	
+	
+$(OBJS): $(BUILDDIR)/%.o : $(SOURCEDIR)/%.cpp
+	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 .PHONY: test clean
 
-#consolelib:
-#	gcc -fPIC -shared -o libSDL_console.so src/Console/SDL_console.c -Iinclude $(conscflags) $(consldflags)
-
 test: EngineTest
-	./run
+	echo "No tests. yet ;)"
 
 clean:
-	rm -f EngineTest
+	rm -f $(BUILDDIR)/* core *.core $(TARGET)
+	
+install:
+	echo "Installing is not supported"
+	
+# : $(SOURCEDIR)/glad.c

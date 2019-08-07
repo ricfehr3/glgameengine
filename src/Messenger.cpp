@@ -36,7 +36,7 @@ void Messenger::setGameObjectList(GameObjectList* app)
 void Messenger::processString(std::string message)
 {
     std::cout << "messenger got: " << message << std::endl;
-    if(message == "poopy")
+    if(message == "test")
     {
         std::vector<std::string> nameList = mp_gameObjectList->getObjectNames();
         for (auto&& name: nameList)
@@ -44,7 +44,7 @@ void Messenger::processString(std::string message)
             std::cout << name << std::endl;
         }
     }
-    if(message == "shit")
+    if(message == "move")
     {
         GameObject* obj = mp_gameObjectList->getObject("turd man");
         
