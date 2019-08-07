@@ -1,7 +1,8 @@
-CFLAGS = -std=c++17 -Wall -g -Iinclude
+CFLAGS = -std=c++17 -Wall -g -Iinclude $(shell freetype-config --cflags)
+
 
 ##LDFLAGS = -L. -lglfw -lGL -ldl -lm -lassimp -lSDL2 -lpthread -lSDL_console
-LDFLAGS = -lglfw -lGL -ldl -lm -lassimp -lSDL2 -lpthread
+LDFLAGS = -lglfw -lGL -ldl -lm -lassimp -lSDL2 -lpthread $(shell freetype-config --libs)
 
 #conscflags=-Wall -g -ggdb --std=c99 $(shell freetype-config --cflags)
 #consldflags=-lSDL2 -lGL -lm $(shell freetype-config --libs)

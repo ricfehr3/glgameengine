@@ -4,6 +4,10 @@
 #include <SDL2/SDL.h>
 #include <Shader.h>
 #include <iostream>
+#include <vector>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 class Console
 {
@@ -14,17 +18,20 @@ public:
     
 private: 
     static bool m_show;
-    Shader* mp_bgshader;
-    GLuint m_bgVAO;
-    GLuint m_bgVBO;
-    GLuint m_bgEBO;
+    Shader* mp_shader;
+    GLuint m_VAO;
+    GLuint m_VBO;
+    GLuint m_EBO;
     GLuint m_bgtexture;
+    GLuint m_lineTexture;
     
+    std::vector<std::string> mv_oldLines;
     std::string currentLine;
     
     static SDL_mutex* m_mutex;
     
     void renderBackground();
+    void renderLines();
     void renderCursor();
     
     void genBackgroundGL();
@@ -33,8 +40,43 @@ private:
     void genBackgroundTexture();
     
     void getInput(const char* input);
-    void clearLine();
+    void processEntry();
     void removeLastChar();
+    int updateLineTexture();
+    bool rebuildLine;
+    GLfloat w,h;
+    
+    void initFont();
+    
+    static const char DEFAULT_PROMPT[3];
+    static const int  DEFAULT_PROMPT_LENGTH;
+    static const int  DEFAULT_LINE_LENGTH;
+    static const int  DEFAULT_LINE_CHARS;
+    static const int  CONSOLE_CHARS_LEN;
+    
+    struct _ConsoleEntry
+    {
+        std::string entry;
+        GLuint textureID;
+    };
+    
+    std::vector<_ConsoleEntry> mv_consoleEntries;
+    
+    struct _ConsoleFont
+    {
+        FT_Library ft;
+        FT_Face face;
+        GLint font_size;
+        GLint char_width;
+        GLfloat advance;
+        GLfloat line_height;
+        GLfloat baseline;
+    };
+    
+    _ConsoleFont consoleFont;
+    GLint fontSize;
+    
+    std::string fontPath;
     
     static int triggerWatch(void *data, SDL_Event *e)
     {
@@ -92,7 +134,7 @@ private:
 
             case SDLK_RETURN:
                 //Console_NewLine(tty, tty->input_func, tty->input_func_data);
-                console->clearLine();
+                console->processEntry();
                 break;
 
             /* copy */
