@@ -8,6 +8,7 @@ GameApplication::GameApplication(Camera* camera)
     mp_gameWindow = new GameWindow();
     gameObjects = GameObjectList();
     m_messenger = Messenger();
+    m_messenger.setGameObjectList(&gameObjects);
     
     mp_camera = camera;
     
@@ -24,11 +25,11 @@ void GameApplication::init()
 
 void GameApplication::run()
 {       
-    std::thread messagerLoopThread(&Messenger::run, std::ref(m_messenger));
+    //std::thread messagerLoopThread(&Messenger::run, std::ref(m_messenger));
     //std::thread messagerLoopThread(&Messenger::run, m_messenger);
     
     runGameLoop();
-    messagerLoopThread.join();
+    //messagerLoopThread.join();
 }
 
 void GameApplication::addGameObject(GameObject* gameObjectToAdd)
@@ -147,6 +148,11 @@ void GameApplication::runGameLoop()
         mp_gameWindow->m_console.draw();
 
         SDL_GL_SwapWindow(mp_gameWindow->GetSDLWindow());
+        
+        if(mp_gameWindow->m_console.inputReady())
+        {
+            m_messenger.processString(mp_gameWindow->m_console.getInput());
+        }
     }
 }
 

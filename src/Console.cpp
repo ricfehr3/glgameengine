@@ -2,6 +2,25 @@
 
 Console::Console()
 {
+    m_inputReady = false;
+    m_show = false;
+    mp_shader = new Shader();
+    m_bgtexture = -1; // maybe a bad init
+    
+    fontPath = "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf";
+    //fontPath = "fonts/DejaVuSansMono.ttf";
+    fontSize = 12;
+        
+    initFont();
+    rebuildLine = true;
+    
+    _ConsoleEntry consoleEntry {"", 0, 0.0f, 0.0f};
+    mv_consoleEntries.insert(mv_consoleEntries.begin(),consoleEntry);
+}
+/*
+Console::Console(SDL_Window* window)
+{
+    mp_window = window;
     m_show = false;
     mp_shader = new Shader();
     m_bgtexture = -1; // maybe a bad init
@@ -12,6 +31,33 @@ Console::Console()
     
     initFont();
     rebuildLine = true;
+}
+*/
+void Console::setWindow(SDL_Window* window)
+{
+    mp_window = window;
+}
+
+void Console::getWindowDimensions()
+{
+    SDL_GetWindowSize(mp_window, &m_winWidth, &m_winHeight);
+}
+
+bool Console::inputReady()
+{
+    bool ret = false;
+    if(m_inputReady)
+    {
+        m_inputReady = false;
+        ret = true;
+    }
+    
+    return ret;
+}
+
+std::string Console::getInput()
+{
+    return mv_consoleEntries.front().entry;
 }
 
 void Console::initFont()
@@ -69,8 +115,8 @@ void Console::initFont()
 
 void Console::init()
 {
+    getWindowDimensions();
     SDL_AddEventWatch(triggerWatch, this);
-    //SDL_AddEventWatch(forwardTriggerWatch, NULL);
 
     mp_shader->compile("shaders/Console/test.vs", "shaders/Console/test.fs");
     glBindFragDataLocation(mp_shader->ID, 0, "outColor");
@@ -87,11 +133,6 @@ void Console::init()
     std::cout << "compiled" << std::endl;
     
     glGenTextures(1, &m_lineTexture);
-    
-    //glUniform3f(glGetUniformLocation(mp_shader->ID, "textColor"),
-     //       1.0f, 1.0f, 1.0f);
-    
-    //genBackgroundTexture();
 }
 
 void Console::draw()
@@ -111,7 +152,6 @@ void Console::draw()
         glEnable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         mp_shader->use();
         glBindVertexArray(m_VAO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -154,14 +194,14 @@ int Console::updateLineTexture()
     //{
         len = DEFAULT_PROMPT_LENGTH + currentLine.length();
     //}
-    int wrap_len = roundf((float)800.0f / consoleFont.char_width);
+    int wrap_len = roundf((float)m_winWidth / consoleFont.char_width);
 
-    w = wrap_len * consoleFont.char_width;
-    h = (ceil((float)len / (float)wrap_len) + offset) * consoleFont.line_height;
+    mv_consoleEntries.front().w = wrap_len * consoleFont.char_width;
+    mv_consoleEntries.front().h = (ceil((float)len / (float)wrap_len) + offset) * consoleFont.line_height;
 
     /* set of `empty' pixels to clear texture */
-    unsigned char empty[(int)(w * h)];
-    memset(empty, 0, (int)(w * h));
+    unsigned char empty[(int)(mv_consoleEntries.front().w * mv_consoleEntries.front().h)];
+    memset(empty, 0, (int)(mv_consoleEntries.front().w * mv_consoleEntries.front().h));
 
     /* string buffer to output characters from */
     char str[len];
@@ -169,17 +209,13 @@ int Console::updateLineTexture()
     strcpy(str, DEFAULT_PROMPT);
     strcat(str, currentLine.c_str());
 
-    /* insert newline sentinel and then output */
-    //if (line->output) {
-    //    strcat(str, "\n");
-    //    strcat(str, line->output);
-    //}
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_lineTexture);
+    glBindTexture(GL_TEXTURE_2D, mv_consoleEntries.front().textureID);
 
     /* Resize the texture if needed and set any attributes */
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 
-            w, h, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+            mv_consoleEntries.front().w, mv_consoleEntries.front().h, 
+            0, GL_RED, GL_UNSIGNED_BYTE, 0);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -188,7 +224,8 @@ int Console::updateLineTexture()
 
     /* Clear the texture */
     glTexSubImage2D(GL_TEXTURE_2D, 
-            0, 0, 0, w, h, GL_RED, GL_UNSIGNED_BYTE, empty);
+            0, 0, 0, mv_consoleEntries.front().w, mv_consoleEntries.front().h, 
+            GL_RED, GL_UNSIGNED_BYTE, empty);
 
     for (int i = 0; i < len; i++) {
         if (FT_Load_Char(consoleFont.face, str[i], FT_LOAD_RENDER))
@@ -196,7 +233,7 @@ int Console::updateLineTexture()
 
         GLfloat bearingY = consoleFont.face->glyph->bitmap_top;
 
-        if (x + advance > w || str[i] == '\n') {
+        if (x + advance > mv_consoleEntries.front().w || str[i] == '\n') {
             y += consoleFont.line_height;
             x = 0.0f;
 
@@ -235,8 +272,6 @@ int Console::updateLineTexture()
             );
             x += advance;
         }
-    //next:
-    //    x += advance;
     }
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -248,8 +283,8 @@ void Console::renderBackground()
 {    
     GLfloat xpos = 0.0f;
     GLfloat ypos = 0.0f;
-    GLfloat ww   = 800.0f;//tty->window_width;
-    GLfloat wh   = 600.0f;//tty->window_height;
+    GLfloat ww   = (float)m_winWidth;
+    GLfloat wh   = (float)m_winHeight;
     GLfloat vertices[6][4] = {
         { xpos,      ypos + wh, 0.0f, 0.0f},
         { xpos,      ypos,      0.0f, 1.0f},
@@ -262,11 +297,9 @@ void Console::renderBackground()
 
     glUniform3f(glGetUniformLocation(mp_shader->ID, "textColor"),
         0.0f, 0.0f, 0.0f);
-    //glBindTexture(GL_TEXTURE_2D, m_lineTexture);
     glBindTexture(GL_TEXTURE_2D, m_bgtexture);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void Console::renderLines()
@@ -274,51 +307,24 @@ void Console::renderLines()
     GLfloat xpos = 0.0f;
     GLfloat ypos = 0.0f;
     glUniform3f(glGetUniformLocation(mp_shader->ID, "textColor"), 1.0f, 1.0f, 1.0f);
-    //for (l = tty->lines_head; l; l = l->next)
-    //{
-    
-    GLfloat ww   = 800.0f;//tty->window_width;
-    GLfloat wh   = 600.0f;//tty->window_height;
-    /*
-    GLfloat vertices[6][4] = {
-        { xpos,      ypos + wh, 0.0f, 0.0f},
-        { xpos,      ypos,      0.0f, 1.0f},
-        { xpos + ww, ypos,      1.0f, 1.0f},
-                                         
-        { xpos,      ypos + wh, 0.0f, 0.0f},
-        { xpos + ww, ypos,      1.0f, 1.0f},
-        { xpos + ww, ypos + wh, 1.0f, 0.0f}
-    };
-    */
-        
+    for (auto&& entry: mv_consoleEntries)
+    {   
         GLfloat vertices[6][4] = 
         {
-            { xpos,     ypos + h, 0.0f, 0.0f},
-            { xpos,     ypos,     0.0f, 1.0f},
-            { xpos + w, ypos,     1.0f, 1.0f},
+            { xpos,           ypos + entry.h, 0.0f, 0.0f},
+            { xpos,           ypos,           0.0f, 1.0f},
+            { xpos + entry.w, ypos,           1.0f, 1.0f},
                                              
-            { xpos,     ypos + h, 0.0f, 0.0f},
-            { xpos + w, ypos,     1.0f, 1.0f},
-            { xpos + w, ypos + h, 1.0f, 0.0f}
+            { xpos,           ypos + entry.h, 0.0f, 0.0f},
+            { xpos + entry.w, ypos,           1.0f, 1.0f},
+            { xpos + entry.w, ypos + entry.h, 1.0f, 0.0f}
         };
         
-        /*
-        mp_shader->use();
-        glBindVertexArray(m_VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-
-        glBufferData(GL_ARRAY_BUFFER, 
-                sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-        glActiveTexture(GL_TEXTURE0);
-        */
-        //glBindTexture(GL_TEXTURE_2D, l->texture);
-        //glUniform3f(glGetUniformLocation(mp_shader->ID, "textColor"),
-        //        0.0f, 0.0f, 0.0f);
-        glBindTexture(GL_TEXTURE_2D, m_lineTexture);
+        glBindTexture(GL_TEXTURE_2D, entry.textureID);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        //ypos += l->h;
-    //}
+        ypos += entry.h;
+    }
 }
 
 void Console::renderCursor()
@@ -352,9 +358,9 @@ void Console::genBackgroundGL()
             1.0f, 1.0f, 1.0f);
     
     GLfloat l = 0.0f;
-    GLfloat r = 800.0f;//(GLfloat)tty->window_width;
+    GLfloat r = (float)m_winWidth;
     GLfloat b = 0.0f;
-    GLfloat t = 600.0f;//(GLfloat)tty->window_height;
+    GLfloat t = (float)m_winHeight;
     GLfloat orthoMatrix[4*4] = {
         2.0f / (r - l),   0.0f,             0.0f, 0.0f,
         0.0f,             2.0f / (t - b),   0.0f, 0.0f,
@@ -381,7 +387,6 @@ void Console::genBackgroundTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri
     (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    /* fill it with the pixel */
     glTexSubImage2D(
             GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED, GL_UNSIGNED_BYTE, pixel);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -390,15 +395,17 @@ void Console::genBackgroundTexture()
 void Console::getInput(const char* input)
 {
     currentLine += input;
-    std::cout << currentLine << std::endl;
     rebuildLine = true;
 }
 
 void Console::processEntry()
 {
-    mv_oldLines.push_back(currentLine);
+    _ConsoleEntry consoleEntry {currentLine, m_lineTexture, w, h};
+    glGenTextures(1, &m_lineTexture);
+    mv_consoleEntries.insert(mv_consoleEntries.begin(),consoleEntry);
     currentLine.clear();
     rebuildLine = true;
+    m_inputReady = true;
 }
 
 void Console::removeLastChar()

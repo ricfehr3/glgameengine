@@ -40,11 +40,25 @@ void GameObjectList::remove(std::string objectName)
     }
 }
 
+GameObject* GameObjectList::getObject(std::string objectName)
+{
+    GameObject* retObj = nullptr;
+    std::vector<GameObject*>::iterator it;
+    for( it = std::begin(m_gameObjectList); it != std::end(m_gameObjectList); ++it)
+    {
+        if (objectName == (*it)->getName())
+        {
+            retObj = (*it);
+        }
+    }
+    return retObj; 
+}
+
 bool GameObjectList::checkExistingName(std::string objectName)
 {
     bool returnVal = false;
     std::vector<GameObject*>::iterator it;
-    for( it = std::begin(m_gameObjectList); it != std::end(m_gameObjectList);)
+    for( it = std::begin(m_gameObjectList); it != std::end(m_gameObjectList); ++it)
     {
         if (objectName == (*it)->getName())
         {
@@ -52,4 +66,14 @@ bool GameObjectList::checkExistingName(std::string objectName)
         }
     }
     return returnVal;
+}
+
+std::vector<std::string> GameObjectList::getObjectNames()
+{
+    std::vector<std::string> strList;
+    for (auto&& gameObject: m_gameObjectList)
+    {   
+        strList.push_back(gameObject->getName());
+    }
+    return strList;
 }

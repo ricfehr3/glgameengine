@@ -14,6 +14,9 @@ public:
     void updateObjects();
     void add(GameObject* gameObject);
     void remove(std::string objectName);
+    GameObject* getObject(std::string objectName);
+    
+    std::vector<std::string> getObjectNames();
 
 private: 
     std::vector<GameObject*> m_gameObjectList;

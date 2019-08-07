@@ -69,7 +69,7 @@ void GameWindow::init()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return;
     }
-    
+    m_console.setWindow(m_mainWindow);
     m_console.init();
 	
 	// Make this a configurable option. It is vsync on/off

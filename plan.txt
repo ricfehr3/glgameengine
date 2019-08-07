@@ -1,0 +1,23 @@
+Console:
+ * add cursor struct and renderer
+ * add history option with arrow keys
+ * add a setoutput function to display debug in the game console
+
+Messenger:
+ * Maybe an xml file that can do string search based callback functions?
+
+GameApplication:
+ * Add like a global configuration class, so messenger can access it and modify it at runtime
+
+Still want to add cool stuff like:
+ * Generating gameObjects in the console, so you can add some simple models
+ * Creating a scene class to load and unload models and gameObjects
+ * Fix gameObject class to allow the thing above
+ * add in animations for models
+ * add in a physics engine and apply it to gameObjects
+ * more lighting. Some real good gl lighting effects
+ * material classes
+ * normal mapping
+
+
+more to come

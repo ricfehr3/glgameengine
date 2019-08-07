@@ -9,14 +9,26 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+// Todo, add throw if no window. Default constructor needed
+
 class Console
 {
 public:
     Console();
+    //Console(SDL_Window* window);
     void init();
     void draw();
+    void setWindow(SDL_Window* window);
+    bool inputReady();
+    std::string getInput();
     
 private: 
+    SDL_Window* mp_window;
+    int m_winWidth, m_winHeight;
+    void getWindowDimensions();
+    bool m_inputReady;
+    
+
     static bool m_show;
     Shader* mp_shader;
     GLuint m_VAO;
@@ -58,9 +70,12 @@ private:
     {
         std::string entry;
         GLuint textureID;
+        GLfloat w;
+        GLfloat h;
     };
     
     std::vector<_ConsoleEntry> mv_consoleEntries;
+    
     
     struct _ConsoleFont
     {
