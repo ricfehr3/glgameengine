@@ -69,6 +69,8 @@ void GameWindow::init()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return;
     }
+    
+    m_console.init();
 	
 	// Make this a configurable option. It is vsync on/off
 	SDL_GL_SetSwapInterval(0);

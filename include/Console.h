@@ -9,38 +9,55 @@ class Console
 {
 public:
     Console();
+    void init();
     void draw();
     
 private: 
     static bool m_show;
-    Shader* m_shader;
+    Shader* mp_bgshader;
+    GLuint m_bgVAO;
+    GLuint m_bgVBO;
+    GLuint m_bgEBO;
+    GLuint m_bgtexture;
+    
+    std::string currentLine;
+    
     static SDL_mutex* m_mutex;
     
     void renderBackground();
+    void renderCursor();
+    
+    void genBackgroundGL();
+    void genCursorGL();
+    
+    void genBackgroundTexture();
+    
+    void getInput(const char* input);
+    void clearLine();
+    void removeLastChar();
     
     static int triggerWatch(void *data, SDL_Event *e)
     {
+        // hey, it fucking works! hot damn
+        Console* console = static_cast<Console*>(data);
+        
         if (SDL_LockMutex(m_mutex) != 0)
         {
             return 0;
         }
-        std::cout << "turds" << m_show << std::endl;
         // check for tilde
         if (e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_BACKQUOTE) 
         {
-            std::cout << m_show << std::endl;
             if (m_show)
             {
-                std::cout << m_show << std::endl;
-                SDL_DelEventWatch(inputWatch, NULL);
+                SDL_DelEventWatch(inputWatch, console);
                 SDL_StopTextInput();
                 m_show = false;
             } 
             else 
             {
-                std::cout << m_show << std::endl;
                 SDL_StartTextInput();
-                SDL_AddEventWatch(inputWatch, NULL);
+                SDL_AddEventWatch(inputWatch, console);
                 m_show = true;
             }
         }
@@ -51,6 +68,8 @@ private:
     
     static int inputWatch (void *data, SDL_Event *e)
     {
+        Console* console = static_cast<Console*>(data);
+        
         if (SDL_LockMutex(m_mutex) != 0) 
         {
             return 0;
@@ -68,11 +87,12 @@ private:
             switch (e->key.keysym.sym) 
             {
             case SDLK_BACKSPACE:
-                //_Console_remove_input(tty);
+                console->removeLastChar();
                 break;
 
             case SDLK_RETURN:
                 //Console_NewLine(tty, tty->input_func, tty->input_func_data);
+                console->clearLine();
                 break;
 
             /* copy */
@@ -115,7 +135,7 @@ private:
             break;
 
         case SDL_TEXTINPUT:
-            //_Console_get_input(tty, e->text.text);
+            console->getInput(e->text.text);
             break;
         }
 

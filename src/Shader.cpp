@@ -1,7 +1,10 @@
 #include "Shader.h"
 
+#include <iostream>
+
 Shader::Shader()
 {
+    ID = -1;
 }
 
 
@@ -12,6 +15,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 
 void Shader::compile(const GLchar* vertexPath, const GLchar* fragmentPath)
 {
+    
 	// 1. retrieve the vertex/fragment source code from filepath
 	std::string vertexCode;
 	std::string fragmentCode;
@@ -40,6 +44,7 @@ void Shader::compile(const GLchar* vertexPath, const GLchar* fragmentPath)
 	{
 		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
 	}
+	
 	const char* vShaderCode = vertexCode.c_str();
 	const char* fShaderCode = fragmentCode.c_str();
 
@@ -71,6 +76,7 @@ void Shader::compile(const GLchar* vertexPath, const GLchar* fragmentPath)
 		glGetShaderInfoLog(fragment, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl; 
 	}	
+	
 
 	ID = glCreateProgram();
 	glAttachShader(ID, vertex);

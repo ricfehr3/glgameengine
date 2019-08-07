@@ -144,6 +144,7 @@ void GameApplication::runGameLoop()
         
         // ALL THE GAME LOGIC HERE
         gameObjects.updateObjects();
+        mp_gameWindow->m_console.draw();
 
         SDL_GL_SwapWindow(mp_gameWindow->GetSDLWindow());
     }

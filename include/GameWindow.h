@@ -23,12 +23,14 @@ public:
     SDL_Window *GetSDLWindow();
     void consoleHandler();
     
+    Console m_console;
+    
 private:
     // SDL window, where all the magic happens
     SDL_Window *m_mainWindow;
     // GL context, so excited
     SDL_GLContext m_mainContext;
-    Console m_console;        
+    //Console m_console;        
     std::string m_programName;
            
     void setOpenGLAttributes();

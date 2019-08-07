@@ -9,6 +9,7 @@ Messenger::Messenger()
 
 void Messenger::run()
 {
+    /*
     std::string line;
     while(m_running)
     {  
@@ -17,6 +18,7 @@ void Messenger::run()
 	       std::cout << line << std::endl;  
         }
     }
+    */
 }
 
 void Messenger::stop()
