@@ -1,89 +1,12 @@
-#include "GameObject.h"
+#include <RenderedGameObject.h>
 
-/*
-GameObject::GameObject(Model* model, Shader* shader, std::string name)
+RenderedGameObject::RenderedGameObject(Model* model, Shader* shader, std::string name) : GameObject(name)
 {
     mp_model = model;
     mp_shader = shader;
-    
-    m_name = name;
-}
-*/
-
-GameObject::GameObject(std::string name)
-{
-    m_name = name;
 }
 
-void GameObject::setPosition(glm::vec3 newPos)
-{
-    m_position = newPos;
-}
-
-void GameObject::setEulerRotation(glm::vec3 newRot)
-{
-    m_eulerRotation = newRot;
-}
-
-void GameObject::setScale(glm::vec3 newScale)
-{
-    m_scale = newScale;
-}
-
-glm::vec3 GameObject::getPosition()
-{
-    return m_position;
-}
-
-glm::vec3 GameObject::getEulerRotation()
-{
-    return m_eulerRotation;
-}
-
-glm::vec3 GameObject::getScale()
-{
-    return m_scale;
-}
-
-void GameObject::setCamera(Camera* camera)
-{
-    mp_camera = camera;
-}
-
-
-void GameObject::setGameWindow(GameWindow* gameWindow)
-{
-    mp_gameWindow = gameWindow;
-}
-
-std::string GameObject::getName()
-{
-    return m_name;
-}
-
-void GameObject::setName(std::string name)
-{
-    m_name = name;
-}
-
-void GameObject::addComponent(GameComponent* component)
-{
-    component->setGameObject(this);
-    mv_gameComponenets.push_back(component);
-}
-
-
-void GameObject::onRenderUpdate()
-{
-    userUpdate();
-    for (const auto &component : mv_gameComponenets) 
-    {
-        component->onRenderUpdate();
-    }
-}
-
-/*
-void GameObject::update()
+void RenderedGameObject::userUpdate()
 {
     // todo, add logging and better debug besides cout
     bool canRender = false;
@@ -110,14 +33,13 @@ void GameObject::update()
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, m_position); // translate it down so it's at the center of the scene
+        model = glm::translate(model, m_position); 
         model = glm::rotate(model, glm::radians(m_eulerRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_eulerRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_eulerRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::scale(model, m_scale);	// it's a bit too big for our scene, so scale it down
+        model = glm::scale(model, m_scale);
         mp_shader->setMat4("model", model);
         
         mp_model->Draw(*mp_shader);
     }
 }
-*/

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <atomic>
+#include <sstream>
 
 #include <GameObjectList.h>
 #include <GameObject.h>
@@ -17,6 +18,8 @@ public:
     
     void setGameObjectList(GameObjectList* objectList);
     void processString(std::string message);
+    void processGet(std::string getString);
+    void processSet(std::string setString);
     
 private:
     static std::atomic<bool> m_running;

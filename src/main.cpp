@@ -4,6 +4,8 @@
 #include <Shader.h>
 #include <Camera.h>
 #include <Model.h>
+#include <RenderedGameObject.h>
+#include <testComp.h>
 
 #include <iostream>
 
@@ -23,11 +25,15 @@ int main()
         Shader ourShader("shaders/1.model_loading.vs", "shaders/1.model_loading.fs");
         Model ourModel("models/cowboi/man_textured.obj");
         
-        GameObject nanoman(&ourModel, &ourShader, "cowboy");
-        nanoman.setPosition(glm::vec3(0.0f, -1.75f, 0.0f));
-        nanoman.setScale(glm::vec3(0.2f, 0.2f, 0.2f));
-        nanoman.setEulerRotation(glm::vec3(0.0f, 0.0f, 0.0f));
-        app.addGameObject(&nanoman);
+        RenderedGameObject cowboy(&ourModel, &ourShader, "cowboy");
+        cowboy.setPosition(glm::vec3(0.0f, -1.75f, 0.0f));
+        cowboy.setScale(glm::vec3(0.2f, 0.2f, 0.2f));
+        cowboy.setEulerRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+        
+        testComp* test = new testComp;
+        cowboy.addComponent(test);
+        
+        app.addGameObject(&cowboy);
          
         app.run();
     }

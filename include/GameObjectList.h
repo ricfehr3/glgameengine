@@ -15,12 +15,12 @@ public:
     void add(GameObject* gameObject);
     void remove(std::string objectName);
     GameObject* getObject(std::string objectName);
+    bool checkExistingName(std::string name);
     
     std::vector<std::string> getObjectNames();
 
 private: 
     std::vector<GameObject*> m_gameObjectList;
-    bool checkExistingName(std::string name);
 };
 
 #endif

@@ -13,37 +13,44 @@
 #include <Shader.h>
 #include <Camera.h>
 #include <GameWindow.h>
+#include <GameComponent.h>
 
 class GameObject
 {
 public:
-   GameObject(Model* model, Shader* shader, std::string name); 
+   GameObject(std::string name); 
    
    void setPosition(glm::vec3 newPos);
    void setEulerRotation(glm::vec3 newRot);
    void setScale(glm::vec3 newScale);
+   glm::vec3 getPosition();
+   glm::vec3 getEulerRotation();
+   glm::vec3 getScale();
+   void addComponent(GameComponent* component);
    
    void setCamera(Camera* camera);
    void setGameWindow(GameWindow* gameWindow);
    
    std::string getName();
    void setName(std::string);
+   void onRenderUpdate();
+   
 
-   void update();
-
-private:
+protected:
     glm::vec3 m_position;
     glm::vec3 m_eulerRotation;
     glm::vec3 m_scale;
     
-    Model* mp_model;
-    Shader* mp_shader;
     Camera* mp_camera;
     GameWindow* mp_gameWindow;
     
     std::string m_name;
-
-    void setupObject();
+    
+    virtual void userUpdate() = 0;
+    
+    
+private:
+    std::vector<GameComponent*> mv_gameComponenets;
 };
 
 #endif

@@ -1,5 +1,8 @@
 #include <chrono>
 #include <future>
+#include <algorithm>
+#include <vector>
+#include <sstream>
 
 #include <Messenger.h>
 
@@ -33,31 +36,174 @@ void Messenger::setGameObjectList(GameObjectList* app)
     mp_gameObjectList = app;
 }
 
+// be really cool if I could use like reflection or a callback function to make a config file for this
 void Messenger::processString(std::string message)
-{
-    std::cout << "messenger got: " << message << std::endl;
-    if(message == "test")
+{    
+    /*
+    // convert to all lowercase
+    std::transform(message.begin(), message.end(), message.begin(), ::tolower);
+    std::string delimiter = " ";
+    
+    size_t pos = 0;
+    std::string token;
+    std::vector<std::string> messageWords;
+    while ((pos = message.find(delimiter)) != std::string::npos) 
     {
-        std::vector<std::string> nameList = mp_gameObjectList->getObjectNames();
-        for (auto&& name: nameList)
-        {   
-            std::cout << name << std::endl;
-        }
+        token = message.substr(0, pos);
+        std::cout << token << std::endl;
+        message.erase(0, pos + delimiter.length());
     }
-    if(message == "move")
+    std::cout << message << std::endl;
+    */
+    
+    // convert to all lowercase
+    std::transform(message.begin(), message.end(), message.begin(), ::tolower);
+    std::istringstream iss(message);
+    std::string word;
+    iss >> word;
+    if(word == "get")
     {
-        GameObject* obj = mp_gameObjectList->getObject("turd man");
-        
-        if(obj != nullptr)
+        iss >> word;
+        if(word == "gameobjectlist")
         {
-            obj->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+            std::vector<std::string> nameList = mp_gameObjectList->getObjectNames();
+            for (auto&& name: nameList)
+            {   
+                std::cout << name << std::endl;
+            }
         }
         else
         {
-            std::cout << "could not find turd man, dude" << std::endl;
+            if(mp_gameObjectList->checkExistingName(word))
+            {
+                std::string objname = word;
+                iss >> word;
+                if(word == "pos")
+                {
+                    GameObject* obj = mp_gameObjectList->getObject(objname);
+                    glm::vec3 pos = obj->getPosition();
+                    std::cout << "x: " << pos.x << " y: " << pos.y << " z: " << pos.z << std::endl;
+                }
+                else if (word == "rot")
+                {
+                    GameObject* obj = mp_gameObjectList->getObject(objname);
+                    glm::vec3 rot = obj->getEulerRotation();
+                    std::cout << "x: " << rot.x << " y: " << rot.y << " z: " << rot.z << std::endl;
+                }
+                else if (word == "scale")
+                {
+                    GameObject* obj = mp_gameObjectList->getObject(objname);
+                    glm::vec3 scale = obj->getScale();
+                    std::cout << "x: " << scale.x << " y: " << scale.y << " z: " << scale.z << std::endl;
+                }
+                else
+                {
+                    std::cout << "ERROR! " << word << " is not a valid operator." << std::endl;
+                }
+            }
+            else
+            {
+                std::cout << "ERROR! " << word << " is not a valid game object." << std::endl;
+            }
         }
-        
+        //processGet(message);
     }
+    else if (word == "set")
+    {
+        iss >> word;
+        if(mp_gameObjectList->checkExistingName(word))
+        {
+            std::string objname = word;
+            iss >> word;
+            if(word == "pos")
+            {
+                float x,y,z;
+                iss >> word;
+                x = ::atof(word.c_str());
+                iss >> word;
+                y = ::atof(word.c_str());
+                iss >> word;
+                z = ::atof(word.c_str());
+                
+                GameObject* obj = mp_gameObjectList->getObject(objname);
+                obj->setPosition(glm::vec3(x, y, z));
+            }
+            else if (word == "rot")
+            {
+                float x,y,z;
+                iss >> word;
+                x = ::atof(word.c_str());
+                iss >> word;
+                y = ::atof(word.c_str());
+                iss >> word;
+                z = ::atof(word.c_str());
+                
+                GameObject* obj = mp_gameObjectList->getObject(objname);
+                obj->setEulerRotation(glm::vec3(x, y, z));
+            }
+            else if (word == "scale")
+            {
+                float x,y,z;
+                iss >> word;
+                x = ::atof(word.c_str());
+                iss >> word;
+                y = ::atof(word.c_str());
+                iss >> word;
+                z = ::atof(word.c_str());
+                
+                GameObject* obj = mp_gameObjectList->getObject(objname);
+                obj->setScale(glm::vec3(x, y, z));
+            }
+            else
+            {
+                std::cout << "ERROR! " << word << " is not a valid operator." << std::endl;
+            }
+        }
+        //processSet(message);
+    }
+    else
+    {
+        std::cout << "ERROR! " << word << " is not a valid operator." << std::endl;
+    }
+}
+
+void Messenger::processGet(std::string getString)
+{
+    int itr = 0;
+    std::string tmpWord;
+    // convert to all lowercase
+    std::transform(getString.begin(), getString.end(), getString.begin(), ::tolower);
+    std::istringstream iss(getString);
+    while(iss >> tmpWord)
+    {
+        // remove "get"
+        if(itr == 0)
+        {
+            iss >> tmpWord;
+        }
+        else if (tmpWord == "gameobjectlist")
+        {
+            std::vector<std::string> nameList = mp_gameObjectList->getObjectNames();
+            for (auto&& name: nameList)
+            {   
+                std::cout << name << std::endl;
+            }
+        }
+        //else if ()
+        //{
+        
+        //}
+        else
+        {
+            //if (tmp)
+            
+        }
+    }
+}
+
+void Messenger::processSet(std::string setString)
+{
+
 }
 
 std::atomic<bool> Messenger::m_running = ATOMIC_VAR_INIT(true);

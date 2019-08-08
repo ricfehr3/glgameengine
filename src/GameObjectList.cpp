@@ -11,7 +11,7 @@ void GameObjectList::updateObjects()
 {
     for (const auto &gameObject : m_gameObjectList) 
     {
-        gameObject->update();
+        gameObject->onRenderUpdate();
     }
 }
 
