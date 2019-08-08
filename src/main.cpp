@@ -5,6 +5,7 @@
 #include <Camera.h>
 #include <Model.h>
 #include <RenderedGameObject.h>
+#include <RenderComponent.h>
 #include <testComp.h>
 
 #include <iostream>
@@ -31,7 +32,10 @@ int main()
         cowboy.setEulerRotation(glm::vec3(0.0f, 0.0f, 0.0f));
         
         testComp* test = new testComp;
+        RenderComponent* rendComp = new RenderComponent("models/cowboi/man_textured.obj", "shaders/1.model_loading.vs", "shaders/1.model_loading.fs");
+        
         cowboy.addComponent(test);
+        cowboy.addComponent(rendComp);
         
         app.addGameObject(&cowboy);
          

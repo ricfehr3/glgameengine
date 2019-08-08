@@ -56,6 +56,16 @@ void GameObject::setGameWindow(GameWindow* gameWindow)
     mp_gameWindow = gameWindow;
 }
 
+Camera* GameObject::getCamera()
+{
+    return mp_camera;
+}
+
+GameWindow* GameObject::getGameWindow()
+{
+    return mp_gameWindow;
+}
+
 std::string GameObject::getName()
 {
     return m_name;
@@ -75,11 +85,11 @@ void GameObject::addComponent(GameComponent* component)
 
 void GameObject::onRenderUpdate()
 {
-    userUpdate();
     for (const auto &component : mv_gameComponenets) 
     {
         component->onRenderUpdate();
     }
+    userUpdate();
 }
 
 /*

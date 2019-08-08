@@ -30,11 +30,12 @@ public:
    
    void setCamera(Camera* camera);
    void setGameWindow(GameWindow* gameWindow);
+   Camera* getCamera();
+   GameWindow* getGameWindow();
    
    std::string getName();
    void setName(std::string);
    void onRenderUpdate();
-   
 
 protected:
     glm::vec3 m_position;
