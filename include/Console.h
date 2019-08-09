@@ -34,6 +34,7 @@ private:
     GLuint m_VBO;
     GLuint m_EBO;
     GLuint m_bgtexture;
+    GLuint m_cursortexture;
     GLuint m_lineTexture;
     
     std::vector<std::string> mv_oldLines;
@@ -49,6 +50,7 @@ private:
     void genCursorGL();
     
     void genBackgroundTexture();
+    void genCursorTexture();
     
     enum ENTRY_DIR
     {
@@ -65,6 +67,7 @@ private:
     GLfloat w,h;
     
     void initFont();
+    float wrap_len;
     
     static const char DEFAULT_PROMPT[3];
     static const int  DEFAULT_PROMPT_LENGTH;
@@ -94,6 +97,9 @@ private:
         GLfloat line_height;
         GLfloat baseline;
     };
+    
+    // cursors position on console
+    int cursor;
     
     _ConsoleFont consoleFont;
     GLint fontSize;
@@ -182,18 +188,19 @@ private:
                 break;
 
             case SDLK_LEFT:
-                //if (tty->cursor > 0) {
-                //    tty->cursor--;
-                //    tty->rebuild_line = true;
-                //}
+                if (console->cursor > 0)
+                {
+                    console->cursor--;
+                    console->rebuildLine = true;
+                }
                 break;
 
             case SDLK_RIGHT:
-                //if (tty->cursor < tty->max_input && 
-                //        tty->cursor < tty->curr_line->len) {
-                //    tty->cursor++;
-                //    tty->rebuild_line = true;
-                //}
+                if (console->cursor < console->currentLine.length()) 
+                {
+                    console->cursor++;
+                    console->rebuildLine = true;
+                }
                 break;
             }
             break;
