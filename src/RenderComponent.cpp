@@ -1,9 +1,17 @@
 #include <RenderComponent.h>
 
+/*
+RenderComponent::RenderComponent()
+{
+    
+}
+*/
+
 RenderComponent::RenderComponent(char* modelPath, const GLchar* vertexPath, const GLchar* fragmentPath)
 {
     mp_model = new Model(modelPath);
     mp_shader = new Shader(vertexPath, fragmentPath);
+    m_name = "RenderComponent";
 }
 
 void RenderComponent::onRenderUpdate()
@@ -39,3 +47,5 @@ void RenderComponent::onRenderUpdate()
     
     mp_model->Draw(*mp_shader);
 }
+
+AUTO_REGISTER_GAMECOMPONENT(RenderComponent);

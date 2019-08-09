@@ -40,3 +40,17 @@ for a renderer update and a physics update.
 Also what would be cool is a way to abstract the camera class. Such that it can be applied to an object
 or it can be used in the editor for exploring. Then you can start and stop the game whenever you please
 and get a camera of the world (free to move around and do cool shit) and the players camera. 
+
+8/9
+Adding this here first. Made that static get GameComponent Registry thing. I really like it
+I should probably move the current scheme for GameObjects over to that. Probably should make
+and abstract class and everything for it too. Also I need to note that for now since the new
+static registry thing requires a default constructor that I had to create one for RenderComp.
+This has caused a few issues. The Model and Shader classes require defined paths, and have no
+way to set or load models dynmically... So I need to fix that somehow. For now the default 
+RenderComponent class has just been changed to load the cowboy and default shaders. I also 
+need to add a similar static registry for game messages to parse incoming strings over the 
+message bus. Basically have a similar list of messages. Maybe my next step should be to 
+abstract that sceme of dynamically listing stuff at runtime. It is super useful. I also still
+need to go through and when I see an opportunity keep adding destructors and logging to the 
+class I go back to work on. Probably will do that as a cool down at some point.

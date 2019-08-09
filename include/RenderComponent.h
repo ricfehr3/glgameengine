@@ -14,6 +14,7 @@ class RenderComponent : public GameComponent
 {
 public:
     RenderComponent(char* modelPath, const GLchar* vertexPath, const GLchar* fragmentPath);
+    RenderComponent() : RenderComponent("models/cowboi/man_textured.obj",  "shaders/1.model_loading.vs",  "shaders/1.model_loading.fs") {}
     void onRenderUpdate();
 private:
     Model* mp_model;

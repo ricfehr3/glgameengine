@@ -1,5 +1,6 @@
 #include <Logger.h>
 #include <GameApplication.h>
+#include <GameComponentManager.h>
 
 #include <thread>
 #include <chrono>
@@ -57,6 +58,7 @@ void GameApplication::runGameLoop()
     glEnable(GL_CULL_FACE);
    
     uint64_t lastFrame = SDL_GetPerformanceCounter();
+    GameComponentManager::getRegisteredNames();
 
 	while (m_gameloop)
 	{
