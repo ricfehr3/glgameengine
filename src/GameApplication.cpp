@@ -141,13 +141,13 @@ void GameApplication::runGameLoop()
         
         // ALL THE GAME LOGIC HERE
         gameObjects.updateObjects();
-        mp_gameWindow->m_console.draw();
+        mp_gameWindow->m_console->draw();
 
         SDL_GL_SwapWindow(mp_gameWindow->GetSDLWindow());
         
-        if(mp_gameWindow->m_console.inputReady())
+        if(mp_gameWindow->m_console->inputReady())
         {
-            m_messenger.processString(mp_gameWindow->m_console.getInput());
+            mp_gameWindow->m_console->setOutput(m_messenger.processString(mp_gameWindow->m_console->getInput()));
         }
     }
 }

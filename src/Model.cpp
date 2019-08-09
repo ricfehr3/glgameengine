@@ -57,7 +57,7 @@ void Model::Draw(Shader shader)
     }
 }
 
-void Model::loadModel(std::string path)
+void Model::loadModel(const std::string& path)
 {
     Assimp::Importer import;
     const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);

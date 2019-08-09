@@ -29,7 +29,7 @@ GameWindow::GameWindow(int width, int height, std::string programName)
     this->width = width;
     this->height = height;
     m_programName = programName;
-    m_console = Console();
+    m_console = new Console();
 }
 
 SDL_Window *GameWindow::GetSDLWindow()
@@ -70,8 +70,8 @@ void GameWindow::init()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return;
     }
-    m_console.setWindow(m_mainWindow);
-    m_console.init();
+    m_console->setWindow(m_mainWindow);
+    m_console->init();
 	
 	// Make this a configurable option. It is vsync on/off
 	SDL_GL_SetSwapInterval(0);

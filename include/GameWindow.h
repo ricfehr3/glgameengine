@@ -23,7 +23,7 @@ public:
     SDL_Window *GetSDLWindow();
     void consoleHandler();
     
-    Console m_console;
+    Console* m_console;
     
 private:
     // SDL window, where all the magic happens

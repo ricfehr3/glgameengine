@@ -15,67 +15,22 @@ class Console
 {
 public:
     Console();
+    ~Console();
     void init();
     void draw();
     void setWindow(SDL_Window* window);
     bool inputReady();
+    void setOutput(std::string output);
     std::string getInput();
     
 private: 
-    SDL_Window* mp_window;
-    int m_winWidth, m_winHeight;
-    void getWindowDimensions();
-    bool m_inputReady;
-    
-
-    static bool m_show;
-    Shader* mp_shader;
-    GLuint m_VAO;
-    GLuint m_VBO;
-    GLuint m_EBO;
-    GLuint m_bgtexture;
-    GLuint m_cursortexture;
-    GLuint m_lineTexture;
-    
-    std::vector<std::string> mv_oldLines;
-    std::string currentLine;
-    
-    static SDL_mutex* m_mutex;
-    
-    void renderBackground();
-    void renderLines();
-    void renderCursor();
-    
-    void genBackgroundGL();
-    void genCursorGL();
-    
-    void genBackgroundTexture();
-    void genCursorTexture();
-    
+    // enums
     enum ENTRY_DIR
     {
         LINE_UP, LINE_DOWN
     };
     
-    void getInput(const char* input);
-    void processEntry();
-    void removeLastChar();
-    int updateLineTexture();
-    void SetCurrLine(ENTRY_DIR dir);
-    int currLineNum;
-    bool rebuildLine;
-    GLfloat w,h;
-    
-    void initFont();
-    float wrap_len;
-    
-    static const char DEFAULT_PROMPT[3];
-    static const int  DEFAULT_PROMPT_LENGTH;
-    static const int  DEFAULT_LINE_LENGTH;
-    static const int  DEFAULT_LINE_CHARS;
-    static const int  CONSOLE_CHARS_LEN;
-    
-    
+    // structs
     struct _ConsoleEntry
     {
         std::string entry;
@@ -83,9 +38,6 @@ private:
         GLfloat w;
         GLfloat h;
     };
-    
-    std::vector<_ConsoleEntry> mv_consoleEntries;
-    
     
     struct _ConsoleFont
     {
@@ -98,13 +50,55 @@ private:
         GLfloat baseline;
     };
     
-    // cursors position on console
-    int cursor;
+    // OpenGL Stuff
+    Shader* mp_shader;
+    GLuint m_VAO;
+    GLuint m_VBO;
+    GLuint m_bgtexture;
+    GLuint m_cursortexture;
+    void renderBackground();
+    void renderLines();
+    void renderCursor();
+    void initGL();
+    void genConsoleTexture(GLuint &texID);
     
+    //SDL Stuff
+    SDL_Window* mp_window;
+    static SDL_mutex* m_mutex;
+    
+    std::vector<std::string> mv_oldLines;
+    //std::string currentLine;
+
+
     _ConsoleFont consoleFont;
     GLint fontSize;
-    
     std::string fontPath;
+    float wrap_len;
+    unsigned int currLineNum;
+    bool rebuildLine;
+    // cursors position on console
+    unsigned int cursor;
+    int m_winWidth, m_winHeight;
+    void getWindowDimensions();
+    bool m_inputReady;
+    static bool m_show;
+    std::vector<_ConsoleEntry> mv_consoleEntries;
+    
+    void initFont();
+    void getInput(const char* input);
+    void processEntry();
+    void removeLastChar();
+    int updateLineTexture();
+    void SetCurrLine(ENTRY_DIR dir);
+    GLfloat w,h;
+    
+   
+    static const char DEFAULT_PROMPT[3];
+    static const int  DEFAULT_PROMPT_LENGTH;
+    static const int  DEFAULT_LINE_LENGTH;
+    static const int  DEFAULT_LINE_CHARS;
+    static const int  CONSOLE_CHARS_LEN;
+    
     
     static int triggerWatch(void *data, SDL_Event *e)
     {
@@ -161,22 +155,15 @@ private:
                 break;
 
             case SDLK_RETURN:
-                //Console_NewLine(tty, tty->input_func, tty->input_func_data);
                 console->processEntry();
                 break;
 
             /* copy */
             case SDLK_c:
-                //if (SDL_GetModState() & KMOD_CTRL) {
-                    /* SDL_SetClipboardText(tty->curr_line->input) */
-                //}
                 break;
 
             /* paste */
             case SDLK_v:
-                //if (SDL_GetModState() & KMOD_CTRL) {
-                    /* Console_GetInput(tty, SDL_GetClipboardText()); */
-                //}
                 break;
 
             case SDLK_UP:
@@ -196,7 +183,7 @@ private:
                 break;
 
             case SDLK_RIGHT:
-                if (console->cursor < console->currentLine.length()) 
+                if (console->cursor < console->mv_consoleEntries.front().entry.length()) 
                 {
                     console->cursor++;
                     console->rebuildLine = true;

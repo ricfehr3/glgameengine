@@ -37,7 +37,7 @@ void Messenger::setGameObjectList(GameObjectList* app)
 }
 
 // be really cool if I could use like reflection or a callback function to make a config file for this
-void Messenger::processString(std::string message)
+std::string Messenger::processString(std::string message)
 {    
     /*
     // convert to all lowercase
@@ -163,8 +163,10 @@ void Messenger::processString(std::string message)
     }
     else
     {
-        std::cout << "ERROR! " << word << " is not a valid operator." << std::endl;
+        //std::cout << "ERROR! " << word << " is not a valid operator." << std::endl;
+        return "ERROR! " + word + " is not a valid operator.";
     }
+    return "cool beans";
 }
 
 void Messenger::processGet(std::string getString)

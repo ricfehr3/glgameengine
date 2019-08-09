@@ -1,12 +1,14 @@
 #include <Console.h>
 
+#include <Logger.h>
+
 Console::Console()
 {
     m_inputReady = false;
     m_show = false;
     mp_shader = new Shader();
-    m_bgtexture = -1; // maybe a bad init
-    m_cursortexture = -1; // maybe a bad init
+    m_bgtexture = 0;
+    m_cursortexture = 0;
     
     fontPath = "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf";
     //fontPath = "fonts/DejaVuSansMono.ttf";
@@ -19,6 +21,15 @@ Console::Console()
     mv_consoleEntries.insert(mv_consoleEntries.begin(),consoleEntry);
     currLineNum = 0;
     cursor = 0;
+}
+
+Console::~Console()
+{
+    FT_Done_Face(consoleFont.face);
+    FT_Done_FreeType(consoleFont.ft);
+	glDeleteBuffers(1, &m_VAO);
+	glDeleteBuffers(1, &m_VBO);
+	
 }
 
 void Console::setWindow(SDL_Window* window)
@@ -56,26 +67,26 @@ void Console::initFont()
     
     if ((e = FT_Init_FreeType(&ft)))
      {
-        std::cout << "Freetype failed to init" << std::endl;
+        GLOG_ERROR("Freetype failed to init");
         return;
     }
     
     if ((e = FT_New_Face(ft, fontPath.c_str(), 0, &face)))
      {
-        std::cout << "Freetype failed to open font" << std::endl;
+        GLOG_ERROR("Freetype failed to open font");
         FT_Done_FreeType(ft);
         return;
     }
     
     if (!FT_IS_FIXED_WIDTH(face)) 
     {
-        std::cout << "Font must be fixed width (monospace)!" << std::endl;
+        GLOG_ERROR("Font must be fixed width (monospace)!");
         return;
     }
     
     if (!FT_IS_SCALABLE(face)) 
     {
-        std::cout << "Font isn't scalable!" << std::endl;
+        GLOG_ERROR("Font isn't scalable!");
         return;
     }
     
@@ -83,7 +94,7 @@ void Console::initFont()
     
     if ((e = FT_Load_Glyph(face, FT_Get_Char_Index(face, 'm'), FT_LOAD_RENDER))) 
     {
-        std::cout << "Loading glyphs failed: " << std::endl;
+        GLOG_ERROR("Loading glyphs failed: ");
         return;
     }
     
@@ -99,6 +110,7 @@ void Console::initFont()
         - (FT_MulFix(face->descender, face->size->metrics.y_scale) >> 6)
         + 1;
     consoleFont.baseline = abs(face->descender) * fontSize / face->units_per_EM;
+    GLOG_DEBUG("Console font initialized")
 }
 
 void Console::init()
@@ -111,17 +123,16 @@ void Console::init()
     
     glUseProgram(mp_shader->ID);
     
-    
-    genBackgroundGL();
-    genBackgroundTexture();
-    genCursorTexture();
+    initGL();
+    genConsoleTexture(m_bgtexture);
+    genConsoleTexture(m_cursortexture);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
     std::cout << "compiled" << std::endl;
     
-    glGenTextures(1, &m_lineTexture);
+    glGenTextures(1, &mv_consoleEntries.front().textureID);
     wrap_len = roundf((float)m_winWidth / consoleFont.char_width);
 }
 
@@ -182,7 +193,7 @@ int Console::updateLineTexture()
     //} 
     //else 
     //{
-        len = DEFAULT_PROMPT_LENGTH + currentLine.length();
+        len = DEFAULT_PROMPT_LENGTH + mv_consoleEntries.front().entry.length();
     //}
     //wrap_len = roundf((float)m_winWidth / consoleFont.char_width);
 
@@ -197,7 +208,7 @@ int Console::updateLineTexture()
     char str[len];
     memset(str, 0, len);
     strcpy(str, DEFAULT_PROMPT);
-    strcat(str, currentLine.c_str());
+    strcat(str, mv_consoleEntries.front().entry.c_str());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mv_consoleEntries.front().textureID);
@@ -327,17 +338,6 @@ void Console::renderCursor()
     GLfloat cx = (float)(cursor_len * consoleFont.char_width);
     // The number of total lines minus the lines of cursor times line height
     GLfloat cy = ((mv_consoleEntries.front().h  / lh) - (float)((cursor_len / wrap_len) + 1)) * lh;
-    /*
-    std::cout << "cursor: " << cursor 
-              << " curlin.length(): " <<  currentLine.length()
-              << " lh: " << lh 
-              << " cw: " << cw 
-              << " cursor_len: " << cursor_len
-              << " char_width: " << consoleFont.char_width
-              << " cx:  " << cx
-              << " h: " << mv_consoleEntries.front().h 
-              << " cy: " << cy << std::endl;  
-    */
     GLfloat cursor_vert[6][4] = {
         { cx,      cy + lh, 0.0f, 0.0f},
         { cx,      cy,      0.0f, 1.0f},
@@ -354,13 +354,7 @@ void Console::renderCursor()
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(cursor_vert), cursor_vert);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
-
-void Console::genCursorGL()
-{
-
-}
-
-void Console::genBackgroundGL()
+void Console::initGL()
 {
     glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
@@ -395,34 +389,14 @@ void Console::genBackgroundGL()
     
 }
 
-void Console::genBackgroundTexture()
+void Console::genConsoleTexture(GLuint &texID)
 {
 /* figure out the dimensions of the cursor and create pixel */
     unsigned char pixel[1] = { 169 }; // transparency
     /* Generate the texture */
     // todo make a texture class pls
-    glGenTextures(1, &m_bgtexture);
-    glBindTexture(GL_TEXTURE_2D, m_bgtexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 1, 1, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri
-    (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexSubImage2D(
-            GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED, GL_UNSIGNED_BYTE, pixel);
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void Console::genCursorTexture()
-{
-    // figure out the dimensions of the cursor and create pixel 
-    unsigned char pixel[1] = { 169 }; // transparency
-    // Generate the texture 
-    // todo make a texture class pls
-    glGenTextures(1, &m_cursortexture);
-    glBindTexture(GL_TEXTURE_2D, m_cursortexture);
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 1, 1, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -437,13 +411,8 @@ void Console::genCursorTexture()
 
 void Console::getInput(const char* input)
 {
-    /*
-    cursor++;
-    currentLine += input;
     rebuildLine = true;
-    */
-    rebuildLine = true;
-    currentLine.insert(cursor, 1, *const_cast<char*>(input));
+    mv_consoleEntries.front().entry.insert(cursor, 1, *const_cast<char*>(input));
     cursor++;
 }
 
@@ -451,48 +420,66 @@ void Console::processEntry()
 {
     cursor = 0;
     currLineNum = 0;
-    _ConsoleEntry consoleEntry {currentLine, m_lineTexture, w, h};
-    glGenTextures(1, &m_lineTexture);
-    mv_consoleEntries.insert(mv_consoleEntries.begin(),consoleEntry);
-    currentLine.clear();
+    //_ConsoleEntry consoleEntry {"", 0, 0.0f, 0.0f};
+    //mv_consoleEntries.insert(mv_consoleEntries.begin(),consoleEntry);
+    //glGenTextures(1, &mv_consoleEntries.front().textureID);
     rebuildLine = true;
     m_inputReady = true;
 }
 
 void Console::removeLastChar()
 {
-    std::cout << "cursor: " << cursor << " len: " << currentLine.length() << std::endl;
-    if(cursor > 0 && cursor <= currentLine.length())
+    if(cursor > 0 && cursor <= mv_consoleEntries.front().entry.length())
     {
-        currentLine.erase(currentLine.begin() + cursor - 1);
+        mv_consoleEntries.front().entry.erase(mv_consoleEntries.front().entry.begin() + cursor - 1);
         cursor--;
         rebuildLine = true;
-    }
-    else 
-    {
-        std::cout << "dumbass" << std::endl;
     }
 }
 
 void Console::SetCurrLine(ENTRY_DIR dir)
 {
     rebuildLine = true;
-    currentLine = mv_consoleEntries.at(currLineNum).entry;
-    cursor = currentLine.length();
+    bool isClear = false;
     // don't go out of bounds pls
     if(dir == LINE_UP && currLineNum < mv_consoleEntries.size() - 1)
     {
         currLineNum++;
     }
-    else if (dir == LINE_DOWN && currLineNum > 0)
+    else if (dir == LINE_DOWN && currLineNum >= 0)
     {
-        currLineNum--;
+        if (currLineNum == 1)
+        {
+            cursor = 0;
+            isClear = true;
+        }
+        else
+        {
+            currLineNum--;
+        }
     }
-    // clear line if at bottom at array
-    else if (dir == LINE_DOWN)
+    if (isClear)
     {
-        currentLine = "";
+        mv_consoleEntries.front().entry = "";
     }
+    else
+    {
+        mv_consoleEntries.front().entry = mv_consoleEntries.at(currLineNum).entry;
+    }
+    cursor = mv_consoleEntries.front().entry.length();
+}
+
+void Console::setOutput(std::string output)
+{
+    std::cout << "got output: " << output << std::endl;
+    _ConsoleEntry consoleEntry {output, 0, 0.0f, 0.0f};
+    mv_consoleEntries.insert(mv_consoleEntries.begin(), consoleEntry);
+    glGenTextures(1, &mv_consoleEntries.front().textureID);
+    updateLineTexture();
+    _ConsoleEntry consoleEntryClear {"", 0, 0.0f, 0.0f};
+    mv_consoleEntries.insert(mv_consoleEntries.begin(), consoleEntryClear);
+    glGenTextures(1, &mv_consoleEntries.front().textureID);
+    rebuildLine = true;
 }
 
 bool Console::m_show = false;

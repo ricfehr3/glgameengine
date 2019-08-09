@@ -17,7 +17,7 @@ public:
     void stop();
     
     void setGameObjectList(GameObjectList* objectList);
-    void processString(std::string message);
+    std::string processString(std::string message);
     void processGet(std::string getString);
     void processSet(std::string setString);
     
