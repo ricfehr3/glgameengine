@@ -6,7 +6,7 @@
 class RenderedGameObject : public GameObject
 {
 public:
-    RenderedGameObject(/*Model* model, Shader* shader, */std::string name);
+    RenderedGameObject(std::string name);
     
     void userUpdate();
     
