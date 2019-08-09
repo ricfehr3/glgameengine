@@ -1,4 +1,5 @@
 #include <GameWindow.h>
+#include <Logger.h>
 
 #include <glad/glad.h>
 
@@ -80,7 +81,7 @@ void GameWindow::init()
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	//SDL_CaptureMouse(SDL_TRUE); // this just allows sdl to get all mouse events even outside of the window, whoops
 	
-	std::cout << "Running with opengl version: " <<  glGetString(GL_VERSION) << std::endl;
+	GLOG_INFO("Running with opengl version: " + std::string((char*)glGetString(GL_VERSION)));
 }
 
 void GameWindow::setOpenGLAttributes()

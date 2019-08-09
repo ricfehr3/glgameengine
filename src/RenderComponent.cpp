@@ -8,7 +8,6 @@ RenderComponent::RenderComponent(char* modelPath, const GLchar* vertexPath, cons
 
 void RenderComponent::onRenderUpdate()
 {
-    /*
     mp_shader->use();
 
     // view/projection transformations
@@ -39,5 +38,4 @@ void RenderComponent::onRenderUpdate()
     mp_shader->setMat4("model", model);
     
     mp_model->Draw(*mp_shader);
-    */
 }

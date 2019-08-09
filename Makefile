@@ -2,7 +2,7 @@ SOURCEDIR = src
 BUILDDIR = build
 
 CXXFLAGS = -std=c++17 -Wall -g -Iinclude $(shell freetype-config --cflags)
-LDFLAGS = -lglfw -lGL -ldl -lm -lassimp -lSDL2 -lpthread $(shell freetype-config --libs)
+LDFLAGS = -lglfw -lGL -ldl -lm -lassimp -lSDL2 -lboost_log_setup -lboost_log -lboost_thread -lboost_system -lpthread $(shell freetype-config --libs)
 TARGET = EngineTest
 SRCS = $(wildcard $(SOURCEDIR)/*.cpp)
 OBJS = $(patsubst $(SOURCEDIR)/%.cpp,$(BUILDDIR)/%.o,$(SRCS))
@@ -16,7 +16,7 @@ glad: $(SOURCEDIR)/glad.c
 	$(CXX) -c $(CXXFLAGS) $(SOURCEDIR)/glad.c -o $(BUILDDIR)/glad.o	
 	
 $(OBJS): $(BUILDDIR)/%.o : $(SOURCEDIR)/%.cpp
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+	$(CXX) -c $(CXXFLAGS) -DBOOST_LOG_DYN_LINK $< -o $@
 
 .PHONY: test clean
 

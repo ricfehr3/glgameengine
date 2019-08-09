@@ -8,6 +8,7 @@
 #include <GameObject.h>
 #include <GameObjectList.h>
 #include <Messenger.h>
+#include <Logger.h>
 
 class GameApplication
 {
@@ -30,6 +31,8 @@ private:
     GameWindow* mp_gameWindow;
     Messenger m_messenger;
     std::mutex m_gameMutex;
+    
+    GameLogger::Logger* m_logger;
     
     void runGameLoop();
 };

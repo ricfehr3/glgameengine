@@ -1,13 +1,14 @@
 #include <RenderedGameObject.h>
 
-RenderedGameObject::RenderedGameObject(Model* model, Shader* shader, std::string name) : GameObject(name)
+RenderedGameObject::RenderedGameObject(/*Model* model, Shader* shader, */std::string name) : GameObject(name)
 {
-    mp_model = model;
-    mp_shader = shader;
+    //mp_model = model;
+    //mp_shader = shader;
 }
 
 void RenderedGameObject::userUpdate()
 {
+    /*
     // todo, add logging and better debug besides cout
     bool canRender = false;
     if (mp_camera == nullptr)
@@ -23,6 +24,7 @@ void RenderedGameObject::userUpdate()
         
     if(canRender)
     {
+        
         mp_shader->use();
 
         // view/projection transformations
@@ -41,5 +43,7 @@ void RenderedGameObject::userUpdate()
         mp_shader->setMat4("model", model);
         
         mp_model->Draw(*mp_shader);
+        
     }
+    */
 }

@@ -1,3 +1,4 @@
+#include <Logger.h>
 #include <GameApplication.h>
 
 #include <thread>
@@ -16,11 +17,15 @@ GameApplication::GameApplication(Camera* camera)
     
     m_gameloop = false;
     m_menuMode = false;
+    
+    m_logger = new GameLogger::Logger();
 }
 
 void GameApplication::init()
 {
+    m_logger->init("log/gamelog_%N.log", "trace");
     mp_gameWindow->init();
+    GLOG_DEBUG("gameapplication initialized");
 }
 
 void GameApplication::run()
@@ -40,17 +45,7 @@ void GameApplication::addGameObject(GameObject* gameObjectToAdd)
 }
 
 void GameApplication::runGameLoop()
-{
-    /*
-    Shader ourShader("shaders/1.model_loading.vs", "shaders/1.model_loading.fs");
-    Model ourModel("models/nanosuit/nanosuit.obj");
-
-    GameObject nanoman2(&ourModel, &ourShader, "coolboy");
-    nanoman2.setPosition(glm::vec3(0.0f, 1.75f, 0.0f));
-    nanoman2.setScale(glm::vec3(0.2f, 0.2f, 0.2f));
-    nanoman2.setEulerRotation(glm::vec3(0.0f, 0.0f, 0.0f));
-    */
-   
+{  
     // thinking about making this an enum to pause the game... somehow
 	m_gameloop = true;
     
