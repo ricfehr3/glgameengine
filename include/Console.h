@@ -15,7 +15,6 @@ class Console
 {
 public:
     Console();
-    //Console(SDL_Window* window);
     void init();
     void draw();
     void setWindow(SDL_Window* window);
@@ -51,10 +50,17 @@ private:
     
     void genBackgroundTexture();
     
+    enum ENTRY_DIR
+    {
+        LINE_UP, LINE_DOWN
+    };
+    
     void getInput(const char* input);
     void processEntry();
     void removeLastChar();
     int updateLineTexture();
+    void SetCurrLine(ENTRY_DIR dir);
+    int currLineNum;
     bool rebuildLine;
     GLfloat w,h;
     
@@ -65,6 +71,7 @@ private:
     static const int  DEFAULT_LINE_LENGTH;
     static const int  DEFAULT_LINE_CHARS;
     static const int  CONSOLE_CHARS_LEN;
+    
     
     struct _ConsoleEntry
     {
@@ -167,11 +174,11 @@ private:
                 break;
 
             case SDLK_UP:
-                //Console_SetCurrLine(tty, LINE_UP);
+                console->SetCurrLine(LINE_UP);
                 break;
 
             case SDLK_DOWN:
-                //Console_SetCurrLine(tty, LINE_DOWN);
+                console->SetCurrLine(LINE_DOWN);
                 break;
 
             case SDLK_LEFT:

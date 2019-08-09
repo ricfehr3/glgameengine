@@ -1,15 +1,5 @@
 #include "GameObject.h"
 
-/*
-GameObject::GameObject(Model* model, Shader* shader, std::string name)
-{
-    mp_model = model;
-    mp_shader = shader;
-    
-    m_name = name;
-}
-*/
-
 GameObject::GameObject(std::string name)
 {
     m_name = name;

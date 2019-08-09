@@ -16,23 +16,9 @@ Console::Console()
     
     _ConsoleEntry consoleEntry {"", 0, 0.0f, 0.0f};
     mv_consoleEntries.insert(mv_consoleEntries.begin(),consoleEntry);
+    currLineNum = 0;
 }
-/*
-Console::Console(SDL_Window* window)
-{
-    mp_window = window;
-    m_show = false;
-    mp_shader = new Shader();
-    m_bgtexture = -1; // maybe a bad init
-    
-    fontPath = "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf";
-    //fontPath = "fonts/DejaVuSansMono.ttf";
-    fontSize = 12;
-    
-    initFont();
-    rebuildLine = true;
-}
-*/
+
 void Console::setWindow(SDL_Window* window)
 {
     mp_window = window;
@@ -400,6 +386,7 @@ void Console::getInput(const char* input)
 
 void Console::processEntry()
 {
+    currLineNum = 0;
     _ConsoleEntry consoleEntry {currentLine, m_lineTexture, w, h};
     glGenTextures(1, &m_lineTexture);
     mv_consoleEntries.insert(mv_consoleEntries.begin(),consoleEntry);
@@ -414,6 +401,27 @@ void Console::removeLastChar()
     {
         currentLine.resize(currentLine.size() - 1);
         rebuildLine = true;
+    }
+}
+
+void Console::SetCurrLine(ENTRY_DIR dir)
+{
+    rebuildLine = true;
+    std::cout << currLineNum << " " << mv_consoleEntries.size() << std::endl;
+    currentLine = mv_consoleEntries.at(currLineNum).entry;
+    // don't go out of bounds pls
+    if(dir == LINE_UP && currLineNum < mv_consoleEntries.size() - 1)
+    {
+        currLineNum++;
+    }
+    else if (dir == LINE_DOWN && currLineNum > 0)
+    {
+        currLineNum--;
+    }
+    // clear line if at bottom at array
+    else if (dir == LINE_DOWN)
+    {
+        currentLine = "";
     }
 }
 
