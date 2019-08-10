@@ -1,17 +1,14 @@
 #include <RenderComponent.h>
-
-/*
-RenderComponent::RenderComponent()
-{
-    
-}
-*/
+#include <ObjectRegistryManager.h>
 
 RenderComponent::RenderComponent(char* modelPath, const GLchar* vertexPath, const GLchar* fragmentPath)
 {
     mp_model = new Model(modelPath);
     mp_shader = new Shader(vertexPath, fragmentPath);
-    m_name = "RenderComponent";
+    
+    // all registered objects will need to do this. Maybe I can make this a pure virtual that is called in the base constructor?
+    m_name = "RenderComponent";    
+    ObjectRegistryManager<GameComponent>::ObjectRegistration(this);
 }
 
 void RenderComponent::onRenderUpdate()
@@ -47,5 +44,3 @@ void RenderComponent::onRenderUpdate()
     
     mp_model->Draw(*mp_shader);
 }
-
-AUTO_REGISTER_GAMECOMPONENT(RenderComponent);

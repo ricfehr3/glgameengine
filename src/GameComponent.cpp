@@ -17,6 +17,7 @@ std::string GameComponent::getName()
     return m_name;
 }
 
+/*
 GameComponentRegistry& GameComponentRegistry::get()
 {
     static GameComponentRegistry instance;
@@ -40,3 +41,4 @@ GameComponentRegistration::GameComponentRegistration(GameComponent_creator creat
 {
     GameComponentRegistry::get().add(creator);
 }
+*/

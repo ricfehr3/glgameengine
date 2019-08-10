@@ -48,6 +48,7 @@ protected:
     nonameexception nameex;
 };
 
+/*
 template<class T>
 GameComponent* GameComponentFactory()
 {
@@ -76,5 +77,7 @@ public:
 
 #define AUTO_REGISTER_GAMECOMPONENT(GameComponent) \
     GameComponentRegistration _GameComponent_registration ## GameComponent(&GameComponentFactory<GameComponent>);
+*/
 
 #endif
+

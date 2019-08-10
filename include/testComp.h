@@ -7,6 +7,7 @@
 class testComp : public GameComponent
 {
 public:
+    testComp();
     void onRenderUpdate();
     
 private:

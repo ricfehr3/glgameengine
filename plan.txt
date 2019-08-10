@@ -41,7 +41,7 @@ Also what would be cool is a way to abstract the camera class. Such that it can 
 or it can be used in the editor for exploring. Then you can start and stop the game whenever you please
 and get a camera of the world (free to move around and do cool shit) and the players camera. 
 
-8/9
+8/9:
 Adding this here first. Made that static get GameComponent Registry thing. I really like it
 I should probably move the current scheme for GameObjects over to that. Probably should make
 and abstract class and everything for it too. Also I need to note that for now since the new
@@ -54,3 +54,28 @@ message bus. Basically have a similar list of messages. Maybe my next step shoul
 abstract that sceme of dynamically listing stuff at runtime. It is super useful. I also still
 need to go through and when I see an opportunity keep adding destructors and logging to the 
 class I go back to work on. Probably will do that as a cool down at some point.
+
+8/10:
+Wow holy shit. So this concept took a minute. But There is now an ObjectRegistryManager class and it is 
+some c++ voodoo shit. Essentially it's implementation is completely abstracted out to hold a vector of
+base classes that are statically held in memory in a container that can then run the base class. 
+There are some quirks to it. Each derived object has to register itself in it's implementation to the
+registry. I have that working in the RenderComponent.cpp file in the constructor. I also think that each
+type of game object to be added to this scheme should have a manager class. I'm hoping that I can just 
+inherit the base registry manager class and create manager classes for anything that needs to have it's 
+components managed. So far it's only the gameComponents, gameObjects, and messages that I have in mind.
+So what would be cool is to get all three working simultaneously So I can rest without worry and fear. I
+think I'll be worring tonight because my brain is done after getting that deep into the template class 
+structure. Always remember to take breaks from here on out. That is super helpful. Other than that, 
+now that I have that implementation abstracted I should also abstract components that will be using it. 
+I'm not intending for all of them to have the same functions though. But there are definite similarities
+between the components and the game objects. Tomorrow I need to do three things mainly. 1. Move game 
+objects to the new registry idea (removing the renderedObject or renaming it to a more useful name). 2.
+Create messages that talk to tha messenger on this scheme. Then the messenger can go through a registered 
+list of messages to call. That way you can freely write messeges at your liking and think of a way to 
+make it all universal. 3. Create some messeges that will add and remove gameComponents to game objects.
+Now that that registry exists you should be able to dynamically load and remove gameComponents too and 
+from the registry. All the message needs to have is a reference to gameObject, the registry, and 
+gameComponent. Then it can add and remove by string. That should be super helpful. Still need to do
+the other stuff I talked about yesterday too. Cleaning up and making the models and shaders better. 
+Don't forget!

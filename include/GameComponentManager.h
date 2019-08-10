@@ -7,6 +7,8 @@
 #include <iostream>
 
 #include <GameComponent.h>
+#include <ObjectRegistryManager.h>
+#include <RenderComponent.h>
 
 class  GameComponentManager
 {
@@ -17,17 +19,11 @@ public:
     //std::vector<std::string> getRegisteredNames()
     static /*std::vector<std::string>*/ void getRegisteredNames()
     {
-        // Game component registry testing
-        GameComponentRegistry& registry(GameComponentRegistry::get());
-        for(GameComponentRegistry::iterator it = registry.begin(); it != registry.end(); ++it)
+        ObjectRegistryManager<GameComponent>::ObjectRegistry& registry(ObjectRegistryManager<GameComponent>::ObjectRegistry::get());
+        for(ObjectRegistryManager<GameComponent>::ObjectRegistry::iterator it = registry.begin(); it != registry.end(); ++it)
         {
-            GameComponent_creator func = *it;
-            GameComponent* _ptr = func();
-            std::shared_ptr<GameComponent> ptr(_ptr);
-            //ptr->printNothing();
-            std::cout << "I hope this fucking works: " << ptr->getName() << std::endl;
-            //RenderComponent* fart = static_cast<RenderComponent*>(_ptr);
-            //fart->testfart();
+            GameComponent* func = *it;
+            std::cout << "Component names: " << func->getName() << std::endl;
         }
     }
     
