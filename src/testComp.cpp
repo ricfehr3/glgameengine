@@ -5,8 +5,6 @@
 testComp::testComp()
 {
     m_name = "testMoveComponent";    
-    //ObjectRegistryManager<GameComponent>::ObjectRegistration(this);
-    //GameComponentManager::ObjectRegistration(this);
 }
 
 void testComp::onRenderUpdate()

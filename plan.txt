@@ -117,3 +117,9 @@ THE RENDERCOMPONENT MAKES OPENGL CALLS BEFORE IT'S INITIALIZED IN IT'S CONSTRUCT
 YOU NEED TO FIX THIS AND NEVER DO IT AGAIN. A B S T R A C T  I T  O U T ! ! ! ! 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+Oh boy 3am! Okay I'm tried as shit. Basically the message idea is working out well.
+I need to write some sort of protocol to have the correct message get processed where
+there is no overlap. It may need to regex for a typeof gameObject in some cases, also
+int, also a lot of other checks. Well.. at least the registry core functionality is good.
+Gonna just push this and get some sleep. I'll be back at it tomorrow.

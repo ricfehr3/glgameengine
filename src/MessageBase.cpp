@@ -1,4 +1,5 @@
 #include <MessageBase.h>
+#include <Logger.h>
 #include <sstream>
 
 MessageBase::MessageBase()
@@ -8,7 +9,7 @@ MessageBase::MessageBase()
 
 int MessageBase::getMessageArgs()
 {
-
+    return m_argNumber;
 }
 
 bool MessageBase::matchFormat(std::string incomingMsg)
@@ -20,9 +21,10 @@ void MessageBase::setArgNumber()
 {
     std::stringstream ss(m_messageFormat);
     std::string word;
+    int iter = 0;
     while(ss >> word)
     {
-        std::cout << word << std::endl;
+        iter++;
     }   
-    m_argNumber = 69;
+    m_argNumber = iter;
 }

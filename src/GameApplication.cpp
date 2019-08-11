@@ -26,7 +26,8 @@ GameApplication::GameApplication(Camera* camera)
 
 void GameApplication::init()
 {
-    m_logger->init("log/gamelog_%N.log", "trace");
+    //m_logger->init("log/gamelog_%N.log", "trace");
+    m_logger->init("log/gamelog.log", "trace");
     mp_gameWindow->init();
     GLOG_DEBUG("gameapplication initialized");
 }

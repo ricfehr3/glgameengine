@@ -7,7 +7,7 @@ class GetPosMessage : public MessageBase
 {
 public:
     GetPosMessage();
-
+    std::string processMessage(std::string incomingMsg);
 private:
 };
 

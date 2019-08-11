@@ -6,14 +6,12 @@
 
 #include <Messenger.h>
 #include <MessagesManager.h>
+#include <MessageBase.h>
 
 #include <glm/glm.hpp>
 
-#include <GetPosMessage.h>
-
 Messenger::Messenger()
 {
-    std::cout << "hmmmmmm" << std::endl;
     //GetPosMessage* message = new GetPosMessage();
     std::stringstream ss = MessagesManager::getRegisteredNames();
     std::string word;
@@ -66,6 +64,12 @@ std::string Messenger::processString(std::string message)
     }
     std::cout << message << std::endl;
     */
+    std::map<std::string, MessageBase*>mapTest = MessagesManager::GetObjectMap();
+    std::cout << "testing this right here how cool" << std::endl;
+    for (auto& it : mapTest) 
+    {
+        std::cout << it.second->processMessage(message)  << std::endl;
+    }
     
     // convert to all lowercase
     std::transform(message.begin(), message.end(), message.begin(), ::tolower);

@@ -10,6 +10,7 @@ public:
     MessageBase();
     int getMessageArgs();
     bool matchFormat(std::string incomingMsg);
+    virtual std::string processMessage(std::string incomingMsg) = 0;
     
 protected:
     std::string m_messageFormat;

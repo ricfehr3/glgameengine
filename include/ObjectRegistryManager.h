@@ -2,6 +2,8 @@
 #define OBJECTREGISTRY_H
 
 #include <vector>
+#include <map>
+#include <string>
 #include <sstream>
 
 template<class TBase>
@@ -67,10 +69,28 @@ public:
         return registeredNames;
     }
     
+    
     template<class TReg>
     static void RegisterObject()
     {
         ObjectRegistration(new TReg);
     }
+    
+    // this throws a bad_alloc for some reason?
+    // update: need the typename specifier. It helps load those precious vtables.
+    static typename std::map<std::string, TBase*> GetObjectMap()
+    {
+        std::map<std::string, TBase*> retMap;
+        // should reuse this code. Gotta make it better somehow
+        auto getName = [] (TBase* component) {return component->getName();};
+        ObjectRegistry& registry(ObjectRegistry::get());
+        for( typename ObjectRegistry::iterator it = registry.begin(); it != registry.end(); ++it)
+        {
+            TBase* comp = *it;
+            retMap.insert(std::pair<std::string, TBase*>(getName(comp), comp));
+        }
+        return retMap;
+    } 
+     
 };
 #endif
