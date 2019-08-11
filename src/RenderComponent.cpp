@@ -1,5 +1,5 @@
 #include <RenderComponent.h>
-#include <ObjectRegistryManager.h>
+#include <GameComponentManager.h>
 
 RenderComponent::RenderComponent(char* modelPath, const GLchar* vertexPath, const GLchar* fragmentPath)
 {
@@ -8,7 +8,8 @@ RenderComponent::RenderComponent(char* modelPath, const GLchar* vertexPath, cons
     
     // all registered objects will need to do this. Maybe I can make this a pure virtual that is called in the base constructor?
     m_name = "RenderComponent";    
-    ObjectRegistryManager<GameComponent>::ObjectRegistration(this);
+    //ObjectRegistryManager<GameComponent>::ObjectRegistration(this);
+    //GameComponentManager::ObjectRegistration(this);
 }
 
 void RenderComponent::onRenderUpdate()
@@ -44,3 +45,11 @@ void RenderComponent::onRenderUpdate()
     
     mp_model->Draw(*mp_shader);
 }
+
+/*
+auto registerRenderComponent = []
+{
+    GameComponentManager::RegisterObject<RenderComponent>();
+    return NULL;
+}();
+*/

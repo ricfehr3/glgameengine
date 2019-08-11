@@ -79,3 +79,41 @@ from the registry. All the message needs to have is a reference to gameObject, t
 gameComponent. Then it can add and remove by string. That should be super helpful. Still need to do
 the other stuff I talked about yesterday too. Cleaning up and making the models and shaders better. 
 Don't forget!
+
+8/11
+Need to note this down real quick. Going back to the pooling idea of having an object pool to pull data
+out of for a scene. Then having a global pool to get data out of to add into a scene. So obvously the 
+GameObject has to be the type of objects that are loaded and unloaded in scenes. As for the local pool
+I think I should stick to just using the GameObjectList. Maybe the gameObject list can just have an 
+active component list? Or each scene can have a GameObject list that is loaded when the scene is loaded?
+
+GAH! I forgot that to register an object to the registry it needs to be constructed as I have it now. 
+So a workaround. To register objects at compile time (seemingly. It has to do it at runtime). And 
+register only once you need a lamda prefixed at the implementation. Can't think of a way to do this
+without the code in each derived class. But here is an example take from "GetPosMessage":
+
+auto registerObject = []
+{
+    MessagesManager::RegisterObject<GetPosMessage>();
+    return NULL;
+}();
+
+Cool! It works with only one implementation registered each. Time to add that to the other derived 
+classes!
+
+Update! Can't have multiple definitions of lambda functions. Workaround 2: Each lambda will need to have
+the object name in the form register<ObjectName>. Example:
+
+auto registerRenderComponent = []
+{
+    GameComponentManager::RegisterObject<RenderComponent>();
+    return NULL;
+}();
+
+Update 2!!! VERY IMPORTANT! SO IMPORTANT THAT I AM MAKING BIG COMMENT BLOCKS
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+THE RENDERCOMPONENT MAKES OPENGL CALLS BEFORE IT'S INITIALIZED IN IT'S CONSTRUCTOR
+YOU NEED TO FIX THIS AND NEVER DO IT AGAIN. A B S T R A C T  I T  O U T ! ! ! ! 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////

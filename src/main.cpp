@@ -38,7 +38,6 @@ int main()
         cowboy.addComponent(rendComp);
         
         app.addGameObject(&cowboy);
-         
         app.run();
     }
     catch (const std::exception &e) 

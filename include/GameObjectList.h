@@ -2,11 +2,12 @@
 #define GAMEOBJECTLIST_H
 
 #include <GameObject.h>
+#include <ObjectRegistryManager.h>
 
 #include <string>
 #include <vector>
 
-class GameObjectList
+class GameObjectList : public ObjectRegistryManager<GameObject>
 {
 public:
     GameObjectList();

@@ -14,8 +14,9 @@
 #include <Camera.h>
 #include <GameWindow.h>
 #include <GameComponent.h>
+#include <RegisteredObject.h>
 
-class GameObject
+class GameObject : public RegisteredObject
 {
 public:
    GameObject(std::string name); 

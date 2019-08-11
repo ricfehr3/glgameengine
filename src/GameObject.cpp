@@ -1,8 +1,10 @@
 #include "GameObject.h"
+#include <GameObjectList.h>
 
 GameObject::GameObject(std::string name)
 {
     m_name = name;
+    GameObjectList::ObjectRegistration(this);
 }
 
 void GameObject::setPosition(glm::vec3 newPos)

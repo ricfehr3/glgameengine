@@ -2,11 +2,20 @@
 #define OBJECTREGISTRY_H
 
 #include <vector>
+#include <sstream>
 
 template<class TBase>
 class ObjectRegistryManager
 {
 public:
+    /*
+    template<class TFactory>
+    TFactory* ObjectFactory()
+    {
+        return new TFactory;
+    }
+    */
+
     class ObjectRegistry
     {
     public:
@@ -42,5 +51,26 @@ public:
             ObjectRegistry::get().add(creator);
         }
     };
+    
+    
+    static typename std::stringstream getRegisteredNames()
+    {
+        std::stringstream registeredNames;
+        // lamda to get rid of static errors with calling the getName function
+        auto getName = [] (TBase* component) {return component->getName();};
+        ObjectRegistry& registry(ObjectRegistry::get());
+        for( typename ObjectRegistry::iterator it = registry.begin(); it != registry.end(); ++it)
+        {
+            TBase* comp = *it;
+            registeredNames << getName(comp) << " ";
+        }
+        return registeredNames;
+    }
+    
+    template<class TReg>
+    static void RegisterObject()
+    {
+        ObjectRegistration(new TReg);
+    }
 };
 #endif

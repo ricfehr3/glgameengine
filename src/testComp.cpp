@@ -1,11 +1,12 @@
 #include <testComp.h>
-#include <ObjectRegistryManager.h>
+#include <GameComponentManager.h>
 #include <cmath>
 
 testComp::testComp()
 {
     m_name = "testMoveComponent";    
-    ObjectRegistryManager<GameComponent>::ObjectRegistration(this);
+    //ObjectRegistryManager<GameComponent>::ObjectRegistration(this);
+    //GameComponentManager::ObjectRegistration(this);
 }
 
 void testComp::onRenderUpdate()
@@ -16,3 +17,11 @@ void testComp::onRenderUpdate()
     x += 0.001;
     y += 0.001;
 }
+
+
+auto registertestComp = []
+{
+    GameComponentManager::RegisterObject<testComp>();
+    return NULL;
+}();
+

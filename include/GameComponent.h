@@ -21,63 +21,25 @@
 
 #include <vector>
 #include <string>
-#include <exception>
+ 
+#include <RegisteredObject.h>
  
 // forward declare to avoid a circular dependency
 class GameObject;
 
-class nonameexception : public std::exception
-{
-    virtual const char* what() const throw()
-    {
-        return "Derived gameComponent name is empty";
-    }
-};
-
-class GameComponent
+class GameComponent : public RegisteredObject
 {
 public:
     virtual void onRenderUpdate() = 0;
-    std::string getName();
+    //std::string getName();
     void setGameObject(GameObject* gameObject);
     void printNothing();
         
 protected:
     GameObject* mp_gameObject;
-    std::string m_name;
-    nonameexception nameex;
+    //std::string m_name;
+    //nonameexception nameex;
 };
-
-/*
-template<class T>
-GameComponent* GameComponentFactory()
-{
-    return new T;
-}
-
-typedef GameComponent* (*GameComponent_creator)(void);
-
-class GameComponentRegistry
-{
-public:
-    typedef std::vector<GameComponent_creator>::iterator iterator;
-    static GameComponentRegistry& get();
-    void add(GameComponent_creator);
-    iterator begin();
-    iterator end();
-private:
-    std::vector<GameComponent_creator> mv_GameComponents;
-};
-
-class GameComponentRegistration
-{
-public:
-    GameComponentRegistration(GameComponent_creator);
-};
-
-#define AUTO_REGISTER_GAMECOMPONENT(GameComponent) \
-    GameComponentRegistration _GameComponent_registration ## GameComponent(&GameComponentFactory<GameComponent>);
-*/
 
 #endif
 

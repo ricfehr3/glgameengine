@@ -5,27 +5,37 @@
 #include <string>
 #include <memory>
 #include <iostream>
+#include <sstream>
 
 #include <GameComponent.h>
 #include <ObjectRegistryManager.h>
 #include <RenderComponent.h>
+#include <ObjectRegistryManager.h>
 
-class  GameComponentManager
+// Chosing inheritance over composition on these. They won't go into a list or 
+// anything. It just makes more sense to do it this way. The code looks way better
+// and would seem to be more readable
+class  GameComponentManager : public ObjectRegistryManager<GameComponent>
 {
 public:
     GameComponentManager();
     ~GameComponentManager();
-    
-    //std::vector<std::string> getRegisteredNames()
-    static /*std::vector<std::string>*/ void getRegisteredNames()
+
+    /*    
+    static std::stringstream getRegisteredNames()
     {
-        ObjectRegistryManager<GameComponent>::ObjectRegistry& registry(ObjectRegistryManager<GameComponent>::ObjectRegistry::get());
-        for(ObjectRegistryManager<GameComponent>::ObjectRegistry::iterator it = registry.begin(); it != registry.end(); ++it)
+        std::stringstream registeredNames;
+        // lamda to get rid of static errors with calling the getName function
+        auto getName = [] (GameComponent* gameComponent) {return gameComponent->getName();};
+        ObjectRegistry& registry(ObjectRegistry::get());
+        for(ObjectRegistry::iterator it = registry.begin(); it != registry.end(); ++it)
         {
-            GameComponent* func = *it;
-            std::cout << "Component names: " << func->getName() << std::endl;
+            GameComponent* comp = *it;
+            registeredNames << getName(comp) << " ";
         }
+        return registeredNames;
     }
+    */
     
 private:
 };

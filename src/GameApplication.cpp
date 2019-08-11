@@ -1,9 +1,11 @@
 #include <Logger.h>
 #include <GameApplication.h>
 #include <GameComponentManager.h>
+#include <MessagesManager.h>
 
 #include <thread>
 #include <chrono>
+#include <sstream>
 
 GameApplication::GameApplication(Camera* camera)
 {
@@ -58,7 +60,26 @@ void GameApplication::runGameLoop()
     glEnable(GL_CULL_FACE);
    
     uint64_t lastFrame = SDL_GetPerformanceCounter();
-    GameComponentManager::getRegisteredNames();
+    std::stringstream streamy = GameComponentManager::getRegisteredNames();
+    std::string compname;
+    while(streamy >> compname)
+    {
+        std::cout << compname << std::endl;
+    }
+    
+    compname.clear();
+    std::stringstream streamy2 = GameObjectList::getRegisteredNames();
+    while(streamy2 >> compname)
+    {
+        std::cout << compname << std::endl;
+    }
+    
+    compname.clear();
+    std::stringstream streamy3 = MessagesManager::getRegisteredNames();
+    while(streamy3 >> compname)
+    {
+        std::cout << compname << std::endl;
+    }
 
 	while (m_gameloop)
 	{

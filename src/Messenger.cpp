@@ -5,11 +5,22 @@
 #include <sstream>
 
 #include <Messenger.h>
+#include <MessagesManager.h>
 
 #include <glm/glm.hpp>
 
+#include <GetPosMessage.h>
+
 Messenger::Messenger()
 {
+    std::cout << "hmmmmmm" << std::endl;
+    //GetPosMessage* message = new GetPosMessage();
+    std::stringstream ss = MessagesManager::getRegisteredNames();
+    std::string word;
+    while (ss >> word)
+    {
+        std::cout << word << std::endl;
+    }
 }
 
 void Messenger::run()
