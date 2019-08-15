@@ -13,6 +13,7 @@ public:
 private:
     float x = 0.0f;
     float y = 0.0f;
+    float moveX = 0.0f;
 };
 
 #endif

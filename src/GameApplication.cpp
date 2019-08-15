@@ -2,6 +2,7 @@
 #include <GameApplication.h>
 #include <GameComponentManager.h>
 #include <MessagesManager.h>
+#include <GameTime.h>
 
 #include <thread>
 #include <chrono>
@@ -16,7 +17,7 @@ GameApplication::GameApplication(Camera* camera)
     
     mp_camera = camera;
     
-    deltaTime = 0.0f;
+    //deltaTime = 0.0f;
     
     m_gameloop = false;
     m_menuMode = false;
@@ -29,6 +30,7 @@ void GameApplication::init()
     //m_logger->init("log/gamelog_%N.log", "trace");
     m_logger->init("log/gamelog.log", "trace");
     mp_gameWindow->init();
+    GameTime::init();
     GLOG_DEBUG("gameapplication initialized");
 }
 
@@ -60,7 +62,7 @@ void GameApplication::runGameLoop()
 	// Cull triangles which normal is not towards the camera
     glEnable(GL_CULL_FACE);
    
-    uint64_t lastFrame = SDL_GetPerformanceCounter();
+    //uint64_t lastFrame = SDL_GetPerformanceCounter();
     std::stringstream streamy = GameComponentManager::getRegisteredNames();
     std::string compname;
     while(streamy >> compname)
@@ -84,29 +86,30 @@ void GameApplication::runGameLoop()
 
 	while (m_gameloop)
 	{
-	    uint64_t currentFrame = SDL_GetPerformanceCounter();
-        uint64_t framesElapsed = currentFrame - lastFrame;
-        deltaTime = (float)(framesElapsed / (1000000000.0f));
-        lastFrame = currentFrame;
+		GameTime::updateDeltaTime();
+	    //uint64_t currentFrame = SDL_GetPerformanceCounter();
+        //uint64_t framesElapsed = currentFrame - lastFrame;
+        //deltaTime = (float)(framesElapsed / (1000000000.0f));
+        //lastFrame = currentFrame;
 	
 	    // add an input class here
 	    const unsigned char* keystates = SDL_GetKeyboardState(NULL);
 	    
 	    if(keystates[SDL_SCANCODE_W])
 	    {
-	        mp_camera->ProcessKeyboard(FORWARD, deltaTime);
+	        mp_camera->ProcessKeyboard(FORWARD, GameTime::deltaTime);
 	    }
 	    if(keystates[SDL_SCANCODE_S])
 	    {
-	        mp_camera->ProcessKeyboard(BACKWARD, deltaTime);
+	        mp_camera->ProcessKeyboard(BACKWARD, GameTime::deltaTime);
 	    }
 	    if(keystates[SDL_SCANCODE_A])
 	    {
-	        mp_camera->ProcessKeyboard(LEFT, deltaTime);
+	        mp_camera->ProcessKeyboard(LEFT, GameTime::deltaTime);
 	    }
 	    if(keystates[SDL_SCANCODE_D])
 	    {
-	        mp_camera->ProcessKeyboard(RIGHT, deltaTime);
+	        mp_camera->ProcessKeyboard(RIGHT, GameTime::deltaTime);
 	    }
 		
 		SDL_Event event;

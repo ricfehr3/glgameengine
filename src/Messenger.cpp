@@ -13,12 +13,14 @@
 Messenger::Messenger()
 {
     //GetPosMessage* message = new GetPosMessage();
+    /*
     std::stringstream ss = MessagesManager::getRegisteredNames();
     std::string word;
     while (ss >> word)
     {
         std::cout << word << std::endl;
     }
+    */
 }
 
 void Messenger::run()

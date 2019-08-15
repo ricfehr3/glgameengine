@@ -22,7 +22,7 @@ public:
     
     GameObjectList gameObjects;
     
-    float deltaTime;
+    //float deltaTime;
 
 private:
     bool m_gameloop;
