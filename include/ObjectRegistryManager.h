@@ -92,5 +92,21 @@ public:
         return retMap;
     } 
      
+    static TBase* getObjectByName(std::string objectName)
+    {
+        TBase* ret = nullptr;
+        // reusing... again... need to overload what's in the for loop somehow
+        auto getName = [] (TBase* component) {return component->getName();};
+        ObjectRegistry& registry(ObjectRegistry::get());
+        for( typename ObjectRegistry::iterator it = registry.begin(); it != registry.end(); ++it)
+        {
+            if(getName(*it) == objectName)
+            {
+                ret = *it;
+                break;
+            }
+        }
+        return ret;
+    } 
 };
 #endif

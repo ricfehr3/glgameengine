@@ -4,27 +4,14 @@
 
 MessageBase::MessageBase()
 {
-    setArgNumber();
-}
-
-int MessageBase::getMessageArgs()
-{
-    return m_argNumber;
 }
 
 bool MessageBase::matchFormat(std::string incomingMsg)
 {
-
-}
-
-void MessageBase::setArgNumber()
-{
-    std::stringstream ss(m_messageFormat);
-    std::string word;
-    int iter = 0;
-    while(ss >> word)
+    bool ret = false;
+    if(regex_match(incomingMsg, m_messageFormat))
     {
-        iter++;
-    }   
-    m_argNumber = iter;
+        ret = true;
+    }
+    return ret;
 }

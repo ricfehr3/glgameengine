@@ -47,175 +47,39 @@ void Messenger::setGameObjectList(GameObjectList* app)
 
 // be really cool if I could use like reflection or a callback function to make a config file for this
 std::string Messenger::processString(std::string message)
-{    
-    /*
-    // convert to all lowercase
+{ 
     std::transform(message.begin(), message.end(), message.begin(), ::tolower);
-    std::string delimiter = " ";
-    
-    size_t pos = 0;
-    std::string token;
-    std::vector<std::string> messageWords;
-    while ((pos = message.find(delimiter)) != std::string::npos) 
+    bool foundMsg = false;
+    std::stringstream ss(message);
+    std::stringstream retss;
+    std::string tmp;
+    int argCount = 0;
+    while(ss >> tmp)
     {
-        token = message.substr(0, pos);
-        std::cout << token << std::endl;
-        message.erase(0, pos + delimiter.length());
+        argCount++;
     }
-    std::cout << message << std::endl;
-    */
+    
+    // enumerate all messages in map
     std::map<std::string, MessageBase*>mapTest = MessagesManager::GetObjectMap();
-    std::cout << "testing this right here how cool" << std::endl;
     for (auto& it : mapTest) 
     {
-        std::cout << it.second->processMessage(message)  << std::endl;
-    }
-    
-    // convert to all lowercase
-    std::transform(message.begin(), message.end(), message.begin(), ::tolower);
-    std::istringstream iss(message);
-    std::string word;
-    iss >> word;
-    if(word == "get")
-    {
-        iss >> word;
-        if(word == "gameobjectlist")
+        // compare argument length to message argument length
+        if(it.second->matchFormat(message))
         {
-            std::vector<std::string> nameList = mp_gameObjectList->getObjectNames();
-            for (auto&& name: nameList)
-            {   
-                std::cout << name << std::endl;
-            }
+            retss << it.second->processMessage(message);
+            GLOG_DEBUG(retss.str());
+            foundMsg = true;
+            //break;
         }
-        else
-        {
-            if(mp_gameObjectList->checkExistingName(word))
-            {
-                std::string objname = word;
-                iss >> word;
-                if(word == "pos")
-                {
-                    GameObject* obj = mp_gameObjectList->getObject(objname);
-                    glm::vec3 pos = obj->getPosition();
-                    std::cout << "x: " << pos.x << " y: " << pos.y << " z: " << pos.z << std::endl;
-                }
-                else if (word == "rot")
-                {
-                    GameObject* obj = mp_gameObjectList->getObject(objname);
-                    glm::vec3 rot = obj->getEulerRotation();
-                    std::cout << "x: " << rot.x << " y: " << rot.y << " z: " << rot.z << std::endl;
-                }
-                else if (word == "scale")
-                {
-                    GameObject* obj = mp_gameObjectList->getObject(objname);
-                    glm::vec3 scale = obj->getScale();
-                    std::cout << "x: " << scale.x << " y: " << scale.y << " z: " << scale.z << std::endl;
-                }
-                else
-                {
-                    std::cout << "ERROR! " << word << " is not a valid operator." << std::endl;
-                }
-            }
-            else
-            {
-                std::cout << "ERROR! " << word << " is not a valid game object." << std::endl;
-            }
-        }
-        //processGet(message);
     }
-    else if (word == "set")
-    {
-        iss >> word;
-        if(mp_gameObjectList->checkExistingName(word))
-        {
-            std::string objname = word;
-            iss >> word;
-            if(word == "pos")
-            {
-                float x,y,z;
-                iss >> word;
-                x = ::atof(word.c_str());
-                iss >> word;
-                y = ::atof(word.c_str());
-                iss >> word;
-                z = ::atof(word.c_str());
-                
-                GameObject* obj = mp_gameObjectList->getObject(objname);
-                obj->setPosition(glm::vec3(x, y, z));
-            }
-            else if (word == "rot")
-            {
-                float x,y,z;
-                iss >> word;
-                x = ::atof(word.c_str());
-                iss >> word;
-                y = ::atof(word.c_str());
-                iss >> word;
-                z = ::atof(word.c_str());
-                
-                GameObject* obj = mp_gameObjectList->getObject(objname);
-                obj->setEulerRotation(glm::vec3(x, y, z));
-            }
-            else if (word == "scale")
-            {
-                float x,y,z;
-                iss >> word;
-                x = ::atof(word.c_str());
-                iss >> word;
-                y = ::atof(word.c_str());
-                iss >> word;
-                z = ::atof(word.c_str());
-                
-                GameObject* obj = mp_gameObjectList->getObject(objname);
-                obj->setScale(glm::vec3(x, y, z));
-            }
-            else
-            {
-                std::cout << "ERROR! " << word << " is not a valid operator." << std::endl;
-            }
-        }
-        //processSet(message);
-    }
-    else
-    {
-        //std::cout << "ERROR! " << word << " is not a valid operator." << std::endl;
-        return "ERROR! " + word + " is not a valid operator.";
-    }
-    return "cool beans";
-}
 
-void Messenger::processGet(std::string getString)
-{
-    int itr = 0;
-    std::string tmpWord;
-    // convert to all lowercase
-    std::transform(getString.begin(), getString.end(), getString.begin(), ::tolower);
-    std::istringstream iss(getString);
-    while(iss >> tmpWord)
+    if(!foundMsg)
     {
-        // remove "get"
-        if(itr == 0)
-        {
-            iss >> tmpWord;
-        }
-        else if (tmpWord == "gameobjectlist")
-        {
-            std::vector<std::string> nameList = mp_gameObjectList->getObjectNames();
-            for (auto&& name: nameList)
-            {   
-                std::cout << name << std::endl;
-            }
-        }
-        //else if ()
-        //{
-        
-        //}
-        else
-        {
-            //if (tmp)
-            
-        }
+        retss << "Error could not find message match for: " << message;
+        GLOG_DEBUG(retss.str());
     }
+
+    return retss.str();
 }
 
 void Messenger::processSet(std::string setString)

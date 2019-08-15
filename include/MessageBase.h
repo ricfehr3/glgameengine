@@ -2,21 +2,19 @@
 #define MESSAGEBASE_H
 
 #include <string>
+#include <regex>
+
 #include <RegisteredObject.h>
 
 class MessageBase : public RegisteredObject
 {
 public:
     MessageBase();
-    int getMessageArgs();
     bool matchFormat(std::string incomingMsg);
     virtual std::string processMessage(std::string incomingMsg) = 0;
     
 protected:
-    std::string m_messageFormat;
-    void setArgNumber();
-    
-    int m_argNumber;
+    std::regex m_messageFormat;
 };
 
 #endif

@@ -1,12 +1,12 @@
-#ifndef GETPOSMESSAGE_H
-#define GETPOSMESSAGE_H
+#ifndef SETPOSMESSAGE_H
+#define SETPOSMESSAGE_H
 
 #include <MessageBase.h>
 
-class GetPosMessage : public MessageBase
+class SetPosMessage : public MessageBase
 {
 public:
-    GetPosMessage();
+    SetPosMessage();
     std::string processMessage(std::string incomingMsg);
 private:
     bool checkExistGameObject(std::string name);
