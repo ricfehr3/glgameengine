@@ -1,14 +1,14 @@
-#include <SetPosMessage.h>
+#include <SetRotMessage.h>
 #include <MessagesManager.h>
 #include <GameObjectList.h>
 
-SetPosMessage::SetPosMessage()
+SetRotMessage::SetRotMessage()
 {
-    m_name = "setposmessage";
-    m_messageFormat = "(set pos (.*?) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)) *$";
+    m_name = "setrotmessage";
+    m_messageFormat = "(set rot (.*?) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)) *$";
 }
 
-std::string SetPosMessage::processMessage(std::string incomingMsg)
+std::string SetRotMessage::processMessage(std::string incomingMsg)
 {
     std::stringstream retss;
     std::istringstream iss(incomingMsg);
@@ -16,14 +16,14 @@ std::string SetPosMessage::processMessage(std::string incomingMsg)
                                  std::istream_iterator<std::string>());
     if (checkExistGameObject(results[2]))
     {
-        glm::vec3 newPos(
+        glm::vec3 newRot(
             ::atof(results[3].c_str()),
             ::atof(results[4].c_str()),
             ::atof(results[5].c_str()));
 
-        GameObjectList::getObjectByName(results[2])->setPosition(newPos);
+        GameObjectList::getObjectByName(results[2])->setEulerRotation(newRot);
 
-        retss << "set pos " << results[2] << " " << newPos.x << " " << newPos.y << " " << newPos.z;  
+        retss << "set rot " << results[2] << " " << newRot.x << " " << newRot.y << " " << newRot.z;  
     }
     else
     {
@@ -34,8 +34,8 @@ std::string SetPosMessage::processMessage(std::string incomingMsg)
     return retss.str();
 }
 
-auto registerSetPosMessage = []
+auto registerSetRotMessage = []
 {
-    MessagesManager::RegisterObject<SetPosMessage>();
+    MessagesManager::RegisterObject<SetRotMessage>();
     return 0;
 }();

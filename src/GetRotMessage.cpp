@@ -1,14 +1,14 @@
-#include <GetPosMessage.h>
+#include <GetRotMessage.h>
 #include <MessagesManager.h>
 #include <GameObjectList.h>
 
-GetPosMessage::GetPosMessage()
+GetRotMessage::GetRotMessage()
 {
-    m_name = "getposmessage";
-    m_messageFormat = "(get pos (.*?)) *$";
+    m_name = "getrotmessage";
+    m_messageFormat = "(get rot (.*?)) *$";
 }
 
-std::string GetPosMessage::processMessage(std::string incomingMsg)
+std::string GetRotMessage::processMessage(std::string incomingMsg)
 {
     std::stringstream retss;
     std::istringstream iss(incomingMsg);
@@ -16,8 +16,8 @@ std::string GetPosMessage::processMessage(std::string incomingMsg)
                                  std::istream_iterator<std::string>());
     if (checkExistGameObject(results[2]))
     {
-        glm::vec3 pos = GameObjectList::getObjectByName(results[2])->getPosition();
-        retss << "get pos " << results[2] << " " << pos.x << " " << pos.y << " " << pos.z;  
+        glm::vec3 rot = GameObjectList::getObjectByName(results[2])->getEulerRotation();
+        retss << "get rot " << results[2] << " " << rot.x << " " << rot.y << " " << rot.z;  
     }
     else
     {
@@ -28,8 +28,8 @@ std::string GetPosMessage::processMessage(std::string incomingMsg)
     return retss.str();
 }
 
-auto registerGetPosMessage = []
+auto registerGetRotMessage = []
 {
-    MessagesManager::RegisterObject<GetPosMessage>();
+    MessagesManager::RegisterObject<GetRotMessage>();
     return 0;
 }();

@@ -193,7 +193,11 @@ private:
             break;
 
         case SDL_TEXTINPUT:
-            console->getInput(e->text.text);
+            // ignore the console prompt key
+            if(!(*(e->text.text) == '`'))
+            {
+                console->getInput(e->text.text);
+            }
             break;
         }
 

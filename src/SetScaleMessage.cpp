@@ -1,14 +1,14 @@
-#include <SetPosMessage.h>
+#include <SetScaleMessage.h>
 #include <MessagesManager.h>
 #include <GameObjectList.h>
 
-SetPosMessage::SetPosMessage()
+SetScaleMessage::SetScaleMessage()
 {
-    m_name = "setposmessage";
-    m_messageFormat = "(set pos (.*?) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)) *$";
+    m_name = "setscalemessage";
+    m_messageFormat = "(set scale (.*?) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+) [+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)) *$";
 }
 
-std::string SetPosMessage::processMessage(std::string incomingMsg)
+std::string SetScaleMessage::processMessage(std::string incomingMsg)
 {
     std::stringstream retss;
     std::istringstream iss(incomingMsg);
@@ -16,14 +16,14 @@ std::string SetPosMessage::processMessage(std::string incomingMsg)
                                  std::istream_iterator<std::string>());
     if (checkExistGameObject(results[2]))
     {
-        glm::vec3 newPos(
+        glm::vec3 newScale(
             ::atof(results[3].c_str()),
             ::atof(results[4].c_str()),
             ::atof(results[5].c_str()));
 
-        GameObjectList::getObjectByName(results[2])->setPosition(newPos);
+        GameObjectList::getObjectByName(results[2])->setScale(newScale);
 
-        retss << "set pos " << results[2] << " " << newPos.x << " " << newPos.y << " " << newPos.z;  
+        retss << "set scale " << results[2] << " " << newScale.x << " " << newScale.y << " " << newScale.z;  
     }
     else
     {
@@ -34,8 +34,8 @@ std::string SetPosMessage::processMessage(std::string incomingMsg)
     return retss.str();
 }
 
-auto registerSetPosMessage = []
+auto registerSetScaleMessage = []
 {
-    MessagesManager::RegisterObject<SetPosMessage>();
+    MessagesManager::RegisterObject<SetScaleMessage>();
     return 0;
 }();

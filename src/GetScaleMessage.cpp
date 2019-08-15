@@ -1,14 +1,14 @@
-#include <GetPosMessage.h>
+#include <GetScaleMessage.h>
 #include <MessagesManager.h>
 #include <GameObjectList.h>
 
-GetPosMessage::GetPosMessage()
+GetScaleMessage::GetScaleMessage()
 {
-    m_name = "getposmessage";
-    m_messageFormat = "(get pos (.*?)) *$";
+    m_name = "getscalemessage";
+    m_messageFormat = "(get scale (.*?)) *$";
 }
 
-std::string GetPosMessage::processMessage(std::string incomingMsg)
+std::string GetScaleMessage::processMessage(std::string incomingMsg)
 {
     std::stringstream retss;
     std::istringstream iss(incomingMsg);
@@ -16,8 +16,8 @@ std::string GetPosMessage::processMessage(std::string incomingMsg)
                                  std::istream_iterator<std::string>());
     if (checkExistGameObject(results[2]))
     {
-        glm::vec3 pos = GameObjectList::getObjectByName(results[2])->getPosition();
-        retss << "get pos " << results[2] << " " << pos.x << " " << pos.y << " " << pos.z;  
+        glm::vec3 scale = GameObjectList::getObjectByName(results[2])->getScale();
+        retss << "get scale " << results[2] << " " << scale.x << " " << scale.y << " " << scale.z;  
     }
     else
     {
@@ -28,8 +28,8 @@ std::string GetPosMessage::processMessage(std::string incomingMsg)
     return retss.str();
 }
 
-auto registerGetPosMessage = []
+auto registerGetScaleMessage = []
 {
-    MessagesManager::RegisterObject<GetPosMessage>();
+    MessagesManager::RegisterObject<GetScaleMessage>();
     return 0;
 }();

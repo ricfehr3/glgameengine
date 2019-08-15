@@ -8,8 +8,6 @@ class SetPosMessage : public MessageBase
 public:
     SetPosMessage();
     std::string processMessage(std::string incomingMsg);
-private:
-    bool checkExistGameObject(std::string name);
 };
 
 #endif

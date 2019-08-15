@@ -12,6 +12,7 @@ public:
     MessageBase();
     bool matchFormat(std::string incomingMsg);
     virtual std::string processMessage(std::string incomingMsg) = 0;
+    bool checkExistGameObject(std::string name);
     
 protected:
     std::regex m_messageFormat;
