@@ -1,8 +1,8 @@
 SOURCEDIR = src
 BUILDDIR = build
 
-CXXFLAGS = -std=c++17 -Wall -g -Iinclude $(shell freetype-config --cflags)
-LDFLAGS = -lglfw -lGL -ldl -lm -lassimp -lSDL2 -lboost_log_setup -lboost_log -lboost_thread -lboost_system -lpthread $(shell freetype-config --libs)
+CXXFLAGS = -std=c++17 -Wall -g -Iinclude $(shell freetype-config --cflags) -I/usr/include/bullet
+LDFLAGS = -lglfw -lGL -ldl -lm -lassimp -lSDL2 -lboost_log_setup -lboost_log -lboost_thread -lboost_system -lpthread -lBulletDynamics -lBulletCollision -lLinearMath $(shell freetype-config --libs)
 TARGET = EngineTest
 SRCS = $(wildcard $(SOURCEDIR)/*.cpp)
 OBJS = $(patsubst $(SOURCEDIR)/%.cpp,$(BUILDDIR)/%.o,$(SRCS))

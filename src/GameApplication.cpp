@@ -3,6 +3,7 @@
 #include <GameComponentManager.h>
 #include <MessagesManager.h>
 #include <GameTime.h>
+#include <GamePhysics.h>
 
 #include <thread>
 #include <chrono>
@@ -23,6 +24,8 @@ GameApplication::GameApplication(Camera* camera)
     m_menuMode = false;
     
     m_logger = new GameLogger::Logger();
+
+    m_pGamePhysics = new GamePhysics();
 }
 
 void GameApplication::init()
@@ -30,6 +33,7 @@ void GameApplication::init()
     //m_logger->init("log/gamelog_%N.log", "trace");
     m_logger->init("log/gamelog.log", "trace");
     mp_gameWindow->init();
+    m_pGamePhysics->init();
     GameTime::init();
     GLOG_DEBUG("gameapplication initialized");
 }

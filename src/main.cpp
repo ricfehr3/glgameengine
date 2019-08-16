@@ -26,13 +26,13 @@ int main()
         //Shader ourShader("shaders/1.model_loading.vs", "shaders/1.model_loading.fs");
         //Model ourModel("models/cowboi/man_textured.obj");
         
-        RenderedGameObject cowboy(/*&ourModel, &ourShader, */"cowboy");
-        cowboy.setPosition(glm::vec3(0.0f, -1.75f, 0.0f));
+        RenderedGameObject cowboy("cowboy");
+        cowboy.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
         cowboy.setScale(glm::vec3(0.2f, 0.2f, 0.2f));
         cowboy.setEulerRotation(glm::vec3(0.0f, 0.0f, 0.0f));
         
         testComp* test = new testComp;
-        RenderComponent* rendComp = new RenderComponent("models/cowboi/man_textured.obj", "shaders/1.model_loading.vs", "shaders/1.model_loading.fs");
+        RenderComponent* rendComp = new RenderComponent("models/cube/cube.obj", "shaders/1.model_loading.vs", "shaders/1.model_loading.fs");
         
         cowboy.addComponent(test);
         cowboy.addComponent(rendComp);

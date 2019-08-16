@@ -10,6 +10,8 @@
 #include <Messenger.h>
 #include <Logger.h>
 
+class GamePhysics;
+
 class GameApplication
 {
 public:
@@ -31,6 +33,7 @@ private:
     GameWindow* mp_gameWindow;
     Messenger m_messenger;
     std::mutex m_gameMutex;
+    GamePhysics* m_pGamePhysics;
     
     GameLogger::Logger* m_logger;
     

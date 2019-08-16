@@ -13,7 +13,7 @@ void testComp::onRenderUpdate()
 {
 	float moveSpeed = 3.0f;
 	moveX += moveSpeed*GameTime::deltaTime;
-    mp_gameObject->setPosition(glm::vec3(sin(moveX), -1.8f, 0.0f));
+    //mp_gameObject->setPosition(glm::vec3(sin(moveX), -1.8f, 0.0f));
     //mp_gameObject->setEulerRotation(glm::vec3(0.0f, x*50, 0.0f));
     //mp_gameObject->setScale(glm::vec3(sin(x)*.1+.2, sin(x)*.1+.2, sin(x)*.1+.2));
     x += 0.001;
@@ -26,4 +26,3 @@ auto registertestComp = []
     GameComponentManager::RegisterObject<testComp>();
     return 0;
 }();
-
